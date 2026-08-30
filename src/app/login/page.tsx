@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
+import { BrandLogo } from '@/components/BrandLogo';
 import { 
   ShieldCheck, 
   Lock, 
@@ -12,7 +13,10 @@ import {
   KeyRound, 
   Sparkles,
   Building2,
-  Award
+  Award,
+  MapPin,
+  Phone,
+  Globe
 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -49,54 +53,33 @@ export default function LoginPage() {
       
       {/* Top Header Logo */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        {/* Emblem */}
-        <div className="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#F5A623] via-[#E08A3E] to-[#B33A2E] p-1 shadow-lg">
-          <div className="w-full h-full rounded-full bg-[#FAF7F2] flex items-center justify-center border border-[#E08A3E]/40">
-            <svg
-              viewBox="0 0 36 36"
-              fill="none"
-              className="w-10 h-10 text-[#B33A2E]"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="18" cy="18" r="14" stroke="url(#goldGradLogin)" strokeWidth="1.5" strokeDasharray="2 2" />
-              <circle cx="18" cy="18" r="11" stroke="#B33A2E" strokeWidth="1.2" />
-              <path
-                d="M18 8L20 14L26 12L22 17L28 19L22 21L26 26L20 24L18 30L16 24L10 26L14 21L8 19L14 17L10 12L16 14L18 8Z"
-                fill="url(#goldGradLogin)"
-                opacity="0.85"
-              />
-              <circle cx="18" cy="18" r="3.5" fill="#1B2A4A" />
-              <circle cx="18" cy="18" r="1.5" fill="#FAF7F2" />
-              <defs>
-                <linearGradient id="goldGradLogin" x1="8" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#F5A623" />
-                  <stop offset="0.5" stopColor="#E08A3E" />
-                  <stop offset="1" stopColor="#B33A2E" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
+        {/* Devanagari Hindi "श्री" Mandala Emblem */}
+        <div className="flex justify-center">
+          <BrandLogo size="lg" editable={true} />
         </div>
 
         {/* Brand Name */}
         <div className="mt-4 flex items-baseline justify-center space-x-2">
-          <span className="font-serif text-3xl font-extrabold tracking-tight text-[#B33A2E]">
+          <span className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-[#B33A2E]">
             SHREE
           </span>
-          <span className="font-sans text-2xl font-bold tracking-tight text-[#1B2A4A]">
+          <span className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-[#1B2A4A]">
             QA Solutions
           </span>
         </div>
-        <p className="mt-1 font-serif italic text-xs text-[#1B2A4A]/80">
+        <p className="mt-1 font-serif italic text-xs text-[#1B2A4A]/90">
           "Excelling the Excellence" — CMMI & ISO Lead Appraisal CRM
         </p>
-        <p className="text-[11px] text-gray-600">
-          Kukatpally, Hyderabad - 500072, Telangana, India
+        <p className="text-[11px] text-gray-700 font-semibold mt-0.5">
+          Mahesh Bhaskara • Certified Lead Appraiser
+        </p>
+        <p className="text-[10px] text-gray-500">
+          503, Sharada Nilayam, Jaya Nagar, Road No: 4, Kukatpally, Hyd - 72
         </p>
       </div>
 
       {/* Login Card */}
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4">
         <div className="bg-[#FAF7F2] py-8 px-6 shadow-xl rounded-xl sm:px-10 border border-[#DEC6A6] relative overflow-hidden">
           
           {/* Accent top stripe */}
@@ -194,7 +177,7 @@ export default function LoginPage() {
           <div className="mt-6 pt-4 border-t border-[#DEC6A6]/60 text-center">
             <div className="flex items-center justify-center space-x-1.5 text-[11px] text-gray-500">
               <ShieldCheck className="w-3.5 h-3.5 text-[#B33A2E]" />
-              <span>Protected Appraisal Management Environment</span>
+              <span>Protected Appraisal Environment • Mahesh Bhaskara</span>
             </div>
           </div>
 

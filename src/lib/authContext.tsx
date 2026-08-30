@@ -23,9 +23,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const DEMO_USER: UserProfile = {
   email: 'demo@shreeqasolutions.com',
-  name: 'Lead Appraiser (Demo)',
-  role: 'CMMI Lead Appraiser & Lead Auditor',
-  location: 'Kukatpally, Hyderabad, India',
+  name: 'Mahesh Bhaskara',
+  role: 'Certified Lead Appraiser (CMMI - DEV, SVC, SEC, SPM, PPL)',
+  location: '503, Sharada Nilayam, Jaya Nagar, Road No: 4, Kukatpally, Hyd - 72',
 };
 
 const LOCAL_STORAGE_AUTH_KEY = 'shree_qa_auth_user_v2';

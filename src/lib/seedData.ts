@@ -245,7 +245,7 @@ export function getInitialSeedData(): { clients: Client[]; activityLogs: Activit
       service_type: 'CMMI DEV',
       stage: 'in_appraisal',
       pipeline_substage: 'site_visit',
-      owner: 'Venkat Rao',
+      owner: 'Mahesh Bhaskara',
       last_contact_date: getRelativeDate(-2),
       cert_expiry_date: null,
       notes: 'Enterprise appraisal for CMMI DEV v2.0 Level 5 covering 14 software engineering projects in HITEC City campus.',

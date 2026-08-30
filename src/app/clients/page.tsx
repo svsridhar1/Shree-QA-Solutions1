@@ -7,6 +7,8 @@ import { useCRM } from '@/lib/crmStore';
 import { Client, ClientStage, ServiceType, RiskFilterType } from '@/types/crm';
 import { ClientDetailDrawer } from '@/components/ClientDetailDrawer';
 import { AddClientModal } from '@/components/AddClientModal';
+import { WhatsAppButton } from '@/components/WhatsAppButton';
+import { AIEmailGeneratorModal } from '@/components/AIEmailGeneratorModal';
 import { 
   Search, 
   Filter, 
@@ -22,7 +24,9 @@ import {
   RotateCcw,
   X,
   Layers,
-  Sparkles
+  Sparkles,
+  Mail,
+  FileSpreadsheet
 } from 'lucide-react';
 
 function ClientsContent() {
@@ -36,7 +40,7 @@ function ClientsContent() {
     isRenewalAtRisk, 
     isColdLead, 
     isStalledEngagement,
-    getDaysSinceLastActivity,
+    getDaysSinceLastActivity, 
     isLoading: crmLoading 
   } = useCRM();
 
@@ -45,6 +49,7 @@ function ClientsContent() {
   const [selectedService, setSelectedService] = useState<string>('all');
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [emailClient, setEmailClient] = useState<Client | null>(null);
 
   // Sync URL query params
   useEffect(() => {
@@ -56,7 +61,12 @@ function ClientsContent() {
     if (serviceParam) {
       setSelectedService(serviceParam);
     }
-  }, [searchParams, setActiveRiskFilter]);
+    const selectedId = searchParams.get('selected');
+    if (selectedId && clients.length > 0) {
+      const match = clients.find((c) => c.id === selectedId);
+      if (match) setSelectedClient(match);
+    }
+  }, [searchParams, setActiveRiskFilter, clients]);
 
   // Auth protection
   useEffect(() => {
@@ -167,7 +177,7 @@ function ClientsContent() {
               Client & Appraisal Directory
             </h1>
             <p className="text-xs sm:text-sm text-gray-700 mt-1">
-              Master repository of appraisal engagements, certification timelines, and lead interactions.
+              Master repository of appraisal engagements, certification timelines, Excel/CSV bulk imports, and WhatsApp interactions.
             </p>
           </div>
 
@@ -176,7 +186,7 @@ function ClientsContent() {
             className="flex items-center space-x-2 px-4 py-2.5 rounded-md bg-[#B33A2E] hover:bg-[#8F281E] text-white text-xs font-bold shadow-xs transition-colors"
           >
             <Plus className="w-4 h-4" />
-            <span>Register New Client</span>
+            <span>Register / Import Clients</span>
           </button>
         </div>
       </div>
@@ -327,7 +337,7 @@ function ClientsContent() {
                   Risk Status
                 </th>
                 <th scope="col" className="px-4 py-3.5 text-right text-xs font-serif font-bold tracking-wider">
-                  Action
+                  Quick Actions
                 </th>
               </tr>
             </thead>
@@ -435,17 +445,36 @@ function ClientsContent() {
                         )}
                       </td>
 
-                      {/* Action */}
+                      {/* Actions with WhatsApp & AI Email */}
                       <td className="px-4 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedClient(client);
-                          }}
-                          className="px-2.5 py-1 rounded bg-[#FAF7F2] hover:bg-[#EBDDC9] text-[#1B2A4A] border border-[#DEC6A6] transition-colors"
-                        >
-                          View Logs
-                        </button>
+                        <div className="flex items-center justify-end space-x-1.5">
+                          {/* WhatsApp Trigger */}
+                          <WhatsAppButton client={client} size="icon" />
+
+                          {/* AI Email Trigger */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEmailClient(client);
+                            }}
+                            title={`AI Status Email for ${client.name}`}
+                            className="p-1.5 rounded-md bg-[#B33A2E]/10 text-[#B33A2E] hover:bg-[#B33A2E] hover:text-white transition-colors"
+                          >
+                            <Mail className="w-4 h-4" />
+                          </button>
+
+                          {/* View Drawer */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedClient(client);
+                            }}
+                            className="px-2.5 py-1 rounded bg-[#FAF7F2] hover:bg-[#EBDDC9] text-[#1B2A4A] border border-[#DEC6A6] transition-colors"
+                          >
+                            View
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -462,10 +491,17 @@ function ClientsContent() {
         onClose={() => setSelectedClient(null)}
       />
 
-      {/* Add Client Modal */}
+      {/* Add Client Modal with Excel / CSV Upload */}
       <AddClientModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
+      />
+
+      {/* AI Email Generator Modal */}
+      <AIEmailGeneratorModal
+        client={emailClient}
+        isOpen={!!emailClient}
+        onClose={() => setEmailClient(null)}
       />
 
     </div>

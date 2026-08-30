@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { useCRM } from '@/lib/crmStore';
 import { RiskWidgetCard } from '@/components/RiskWidgetCard';
 import { ServiceTypeChart } from '@/components/ServiceTypeChart';
+import { EnterpriseShowcase } from '@/components/EnterpriseShowcase';
+import { AIAssistantModal } from '@/components/AIAssistantModal';
+import { ClientDetailDrawer } from '@/components/ClientDetailDrawer';
+import { Client } from '@/types/crm';
 import { 
   Users, 
   Kanban, 
@@ -17,7 +21,9 @@ import {
   AlertCircle,
   Building2,
   CalendarDays,
-  FileCheck
+  FileCheck,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -25,6 +31,9 @@ export default function DashboardPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { metrics, clients, activityLogs, isLoading: crmLoading } = useCRM();
+
+  const [isAIOpen, setIsAIOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -61,44 +70,8 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
-      {/* Top Banner & Welcome strip */}
-      <div className="bg-[#FAF7F2] rounded-xl border border-[#DEC6A6] p-6 shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E08A3E] via-[#D35D33] to-[#B33A2E]" />
-        
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EBDDC9] text-[#1B2A4A] border border-[#DEC6A6]">
-                Kukatpally Center of Appraisal Excellence
-              </span>
-              <span className="text-xs text-gray-500">• ISO/IEC 17021 & CMMI v2.0 Partner</span>
-            </div>
-            <h1 className="mt-2 font-serif text-2xl sm:text-3xl font-extrabold text-[#1B2A4A] tracking-tight">
-              Executive Appraisal & Audit Dashboard
-            </h1>
-            <p className="text-xs sm:text-sm text-gray-700 mt-1">
-              Active oversight of client maturity appraisals, recertification cycles, and lead pipeline health.
-            </p>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <Link
-              href="/pipeline"
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-md bg-[#1B2A4A] hover:bg-[#101B31] text-white text-xs font-semibold shadow-xs transition-colors"
-            >
-              <Kanban className="w-4 h-4 text-[#E08A3E]" />
-              <span>Appraisal Kanban</span>
-            </Link>
-            <Link
-              href="/clients"
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-md bg-[#B33A2E] hover:bg-[#8F281E] text-white text-xs font-semibold shadow-xs transition-colors"
-            >
-              <Users className="w-4 h-4" />
-              <span>Client Directory</span>
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* Enterprise Showcase matching Business Card (Scenic Artwork, 16 Badges & Mahesh Bhaskara Profile) */}
+      <EnterpriseShowcase />
 
       {/* Top 4 KPI Strip - Rotating Gold/Orange, Deep Red, Navy */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -167,16 +140,25 @@ export default function DashboardPage() {
 
       {/* 3 Clickable Risk Metrics Section */}
       <div>
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="font-serif text-xl font-bold text-[#1B2A4A] flex items-center space-x-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#B33A2E]" />
               <span>Critical Engagement & Risk Monitors</span>
             </h2>
             <p className="text-xs text-gray-600">
-              Click any monitor card to filter the client records for targeted audit intervention
+              Click any monitor card to filter client records for immediate appraisal intervention
             </p>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setIsAIOpen(true)}
+            className="self-start sm:self-auto flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-[#1B2A4A] hover:bg-[#101B31] text-white text-xs font-bold shadow-xs transition-colors"
+          >
+            <Bot className="w-4 h-4 text-[#E08A3E]" />
+            <span>AI Risk & Pipeline Query</span>
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -257,6 +239,21 @@ export default function DashboardPage() {
           ))}
         </div>
       </div>
+
+      {/* AI Assistant Modal */}
+      <AIAssistantModal
+        isOpen={isAIOpen}
+        onClose={() => setIsAIOpen(false)}
+        onSelectClient={(client) => {
+          setSelectedClient(client);
+        }}
+      />
+
+      {/* Client Detail Drawer */}
+      <ClientDetailDrawer
+        client={selectedClient}
+        onClose={() => setSelectedClient(null)}
+      />
 
     </div>
   );

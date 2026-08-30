@@ -6,6 +6,8 @@ import { useAuth } from '@/lib/authContext';
 import { useCRM } from '@/lib/crmStore';
 import { Client, PipelineSubstage } from '@/types/crm';
 import { ClientDetailDrawer } from '@/components/ClientDetailDrawer';
+import { WhatsAppButton } from '@/components/WhatsAppButton';
+import { AIEmailGeneratorModal } from '@/components/AIEmailGeneratorModal';
 import { 
   Kanban, 
   Clock, 
@@ -16,7 +18,9 @@ import {
   FileText, 
   ArrowRight,
   ShieldCheck,
-  Plus
+  Plus,
+  Mail,
+  Sparkles
 } from 'lucide-react';
 
 interface ColumnDef {
@@ -84,6 +88,7 @@ export default function PipelinePage() {
   } = useCRM();
 
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [emailClient, setEmailClient] = useState<Client | null>(null);
   const [draggedClientId, setDraggedClientId] = useState<string | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<PipelineSubstage | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -164,7 +169,7 @@ export default function PipelinePage() {
               <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EBDDC9] text-[#1B2A4A] border border-[#DEC6A6]">
                 CMMI & ISO Lead Appraisal Flow
               </span>
-              <span className="text-xs text-gray-500">• Drag & Drop between stages</span>
+              <span className="text-xs text-gray-500">• Lead Appraiser: Mahesh Bhaskara</span>
             </div>
             <h1 className="mt-2 font-serif text-2xl sm:text-3xl font-extrabold text-[#1B2A4A] tracking-tight">
               In-Appraisal Kanban Pipeline
@@ -189,7 +194,7 @@ export default function PipelinePage() {
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>{toastMessage}</span>
           </div>
-          <span className="text-[10px] text-emerald-700">Saved to Supabase database</span>
+          <span className="text-[10px] text-emerald-700">Saved to database & activity timeline</span>
         </div>
       )}
 
@@ -279,15 +284,24 @@ export default function PipelinePage() {
                           </div>
                         )}
 
-                        {/* Card metadata footer */}
+                        {/* Card Actions & Footer */}
                         <div className="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-500">
-                          <span className="flex items-center space-x-1">
-                            <User className="w-3 h-3 text-gray-400" />
-                            <span className="truncate max-w-[80px]">{client.owner}</span>
+                          <span className="flex items-center space-x-1 truncate max-w-[70px]">
+                            <User className="w-3 h-3 text-gray-400 shrink-0" />
+                            <span className="truncate">{client.owner}</span>
                           </span>
-                          <span>
-                            {daysSinceActivity}d ago
-                          </span>
+
+                          <div className="flex items-center space-x-1" onClick={(e) => e.stopPropagation()}>
+                            <WhatsAppButton client={client} size="icon" />
+                            <button
+                              type="button"
+                              onClick={() => setEmailClient(client)}
+                              title="AI Status Email"
+                              className="p-1.5 rounded bg-[#B33A2E]/10 text-[#B33A2E] hover:bg-[#B33A2E] hover:text-white transition-colors"
+                            >
+                              <Mail className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );
@@ -295,7 +309,7 @@ export default function PipelinePage() {
                 )}
               </div>
 
-              {/* Column Footer Drop indicator */}
+              {/* Column Footer */}
               <div className="p-2 border-t border-[#DEC6A6]/40 text-center">
                 <span className="text-[10px] text-gray-400">
                   Step {column.stepNumber} of 6
@@ -311,6 +325,13 @@ export default function PipelinePage() {
       <ClientDetailDrawer
         client={selectedClient}
         onClose={() => setSelectedClient(null)}
+      />
+
+      {/* AI Email Generator Modal */}
+      <AIEmailGeneratorModal
+        client={emailClient}
+        isOpen={!!emailClient}
+        onClose={() => setEmailClient(null)}
       />
 
     </div>

@@ -200,7 +200,7 @@ export const CRMProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [clients, isRenewalAtRisk, isColdLead, isStalledEngagement]);
 
   // Add Activity Log
-  const addActivityLog = useCallback(async (clientId: string, note: string, loggedBy: string = 'Demo User (Lead Appraiser)') => {
+  const addActivityLog = useCallback(async (clientId: string, note: string, loggedBy: string = 'Mahesh Bhaskara (Certified Lead Appraiser)') => {
     const nowIso = new Date().toISOString();
     const newLog: ActivityLog = {
       id: 'log-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),

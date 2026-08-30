@@ -2,9 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { useCRM } from '@/lib/crmStore';
+import { BrandLogo } from '@/components/BrandLogo';
+import { AIAssistantModal } from '@/components/AIAssistantModal';
+import { Client } from '@/types/crm';
 import { 
   LayoutDashboard, 
   Users, 
@@ -12,16 +15,19 @@ import {
   LogOut, 
   RotateCcw, 
   ShieldCheck, 
-  Award,
+  Bot,
+  Sparkles,
   Menu,
   X
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout, isAuthenticated } = useAuth();
   const { resetToDemoSeed, metrics } = useCRM();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAIOpen, setIsAIOpen] = useState(false);
 
   // If on login page, don't show full navigation
   const isLoginPage = pathname === '/login';
@@ -48,53 +54,26 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* Brand Logo & Tagline */}
-          <Link href="/" className="flex items-center space-x-3.5 group">
-            {/* Gold-to-orange circular emblem */}
-            <div className="relative flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-[#F5A623] via-[#E08A3E] to-[#B33A2E] p-0.5 shadow-md group-hover:scale-105 transition-transform">
-              <div className="w-full h-full rounded-full bg-[#FAF7F2] flex items-center justify-center border border-[#E08A3E]/30">
-                <svg
-                  viewBox="0 0 36 36"
-                  fill="none"
-                  className="w-7 h-7 text-[#B33A2E]"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="18" cy="18" r="14" stroke="url(#goldGrad)" strokeWidth="1.5" strokeDasharray="2 2" />
-                  <circle cx="18" cy="18" r="11" stroke="#B33A2E" strokeWidth="1.2" />
-                  {/* Central Chakra / Rosette symbol */}
-                  <path
-                    d="M18 8L20 14L26 12L22 17L28 19L22 21L26 26L20 24L18 30L16 24L10 26L14 21L8 19L14 17L10 12L16 14L18 8Z"
-                    fill="url(#goldGrad)"
-                    opacity="0.85"
-                  />
-                  <circle cx="18" cy="18" r="3.5" fill="#1B2A4A" />
-                  <circle cx="18" cy="18" r="1.5" fill="#FAF7F2" />
-                  <defs>
-                    <linearGradient id="goldGrad" x1="8" y1="8" x2="28" y2="28" gradientUnits="userSpaceOnUse">
-                      <stop stopColor="#F5A623" />
-                      <stop offset="0.5" stopColor="#E08A3E" />
-                      <stop offset="1" stopColor="#B33A2E" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-            </div>
+          {/* Brand Logo & Tagline matching business card */}
+          <div className="flex items-center space-x-3.5">
+            {/* Editable Devanagari "श्री" Emblem */}
+            <BrandLogo size="md" editable={true} />
 
             {/* Typography */}
-            <div className="flex flex-col">
+            <Link href="/" className="flex flex-col group">
               <div className="flex items-baseline space-x-1.5">
-                <span className="font-serif text-2xl font-bold tracking-tight text-[#B33A2E]">
+                <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-tight text-[#B33A2E] group-hover:opacity-95 transition-opacity">
                   SHREE
                 </span>
-                <span className="font-sans text-xl font-bold tracking-tight text-[#1B2A4A]">
+                <span className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-[#1B2A4A]">
                   QA Solutions
                 </span>
               </div>
               <span className="text-[11px] font-serif italic text-[#1B2A4A]/80 tracking-wide">
                 Excelling the Excellence
               </span>
-            </div>
-          </Link>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           {!isLoginPage && isAuthenticated && (
@@ -132,15 +111,22 @@ export const Header: React.FC = () => {
           )}
 
           {/* Right Action Items */}
-          <div className="flex items-center space-x-3">
-            {/* CMMI Badge */}
-            <div className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1 rounded bg-[#EBDDC9]/40 border border-[#DEC6A6] text-[11px] text-[#1B2A4A] font-medium">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#B33A2E]" />
-              <span>CMMI & ISO Appraisal Body</span>
-            </div>
-
+          <div className="flex items-center space-x-2.5 sm:space-x-3">
+            
             {!isLoginPage && isAuthenticated && (
               <>
+                {/* AI Assistant Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsAIOpen(true)}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#B33A2E] to-[#E08A3E] text-white text-xs font-bold shadow-xs hover:shadow-md hover:scale-105 transition-all"
+                  title="Ask AI Assistant about clients, appraisals, or risk queries"
+                >
+                  <Bot className="w-4 h-4" />
+                  <span className="hidden sm:inline">AI Assistant</span>
+                  <Sparkles className="w-3 h-3 text-amber-200" />
+                </button>
+
                 {/* Reset Data Button */}
                 <button
                   onClick={() => {
@@ -149,19 +135,19 @@ export const Header: React.FC = () => {
                     }
                   }}
                   title="Reset Demo Data"
-                  className="hidden sm:flex items-center space-x-1 px-2.5 py-1.5 rounded text-xs font-medium text-[#1B2A4A]/80 hover:text-[#B33A2E] hover:bg-[#EBDDC9]/40 border border-[#DEC6A6]/60 transition-colors"
+                  className="hidden lg:flex items-center space-x-1 px-2.5 py-1.5 rounded text-xs font-medium text-[#1B2A4A]/80 hover:text-[#B33A2E] hover:bg-[#EBDDC9]/40 border border-[#DEC6A6]/60 transition-colors"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Reset Seed</span>
                 </button>
 
-                {/* User badge */}
+                {/* Appraiser badge - Mahesh Bhaskara */}
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-xs font-semibold text-[#1B2A4A]">
-                    {user?.name || 'Lead Appraiser'}
+                  <span className="text-xs font-bold text-[#1B2A4A]">
+                    {user?.name || 'Mahesh Bhaskara'}
                   </span>
-                  <span className="text-[10px] text-[#B33A2E]">
-                    Kukatpally, Hyderabad
+                  <span className="text-[10px] font-semibold text-[#B33A2E]">
+                    Lead Appraiser
                   </span>
                 </div>
 
@@ -192,7 +178,21 @@ export const Header: React.FC = () => {
 
       {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && !isLoginPage && isAuthenticated && (
-        <div className="md:hidden bg-[#FAF7F2] border-b border-[#DEC6A6] px-4 pt-2 pb-4 space-y-1">
+        <div className="md:hidden bg-[#FAF7F2] border-b border-[#DEC6A6] px-4 pt-2 pb-4 space-y-1.5">
+          <button
+            onClick={() => {
+              setIsAIOpen(true);
+              setMobileMenuOpen(false);
+            }}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-bold bg-gradient-to-r from-[#B33A2E] to-[#E08A3E] text-white shadow-xs"
+          >
+            <div className="flex items-center space-x-2">
+              <Bot className="w-4 h-4" />
+              <span>AI Appraisal Assistant</span>
+            </div>
+            <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+          </button>
+
           {navLinks.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -219,6 +219,7 @@ export const Header: React.FC = () => {
               </Link>
             );
           })}
+
           <div className="pt-2 border-t border-[#DEC6A6]/60 flex items-center justify-between text-xs text-[#1B2A4A]">
             <button
               onClick={() => {
@@ -240,6 +241,15 @@ export const Header: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* AI Assistant Modal */}
+      <AIAssistantModal
+        isOpen={isAIOpen}
+        onClose={() => setIsAIOpen(false)}
+        onSelectClient={(client) => {
+          router.push(`/clients?selected=${client.id}`);
+        }}
+      />
     </header>
   );
 };
