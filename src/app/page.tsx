@@ -6,7 +6,6 @@ import { useAuth } from '@/lib/authContext';
 import { useCRM } from '@/lib/crmStore';
 import { RiskWidgetCard } from '@/components/RiskWidgetCard';
 import { ServiceTypeChart } from '@/components/ServiceTypeChart';
-import { EnterpriseShowcase } from '@/components/EnterpriseShowcase';
 import { AIAssistantModal } from '@/components/AIAssistantModal';
 import { ClientDetailDrawer } from '@/components/ClientDetailDrawer';
 import { Client } from '@/types/crm';
@@ -70,9 +69,6 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
-      {/* Enterprise Showcase matching Business Card (Scenic Artwork, 16 Badges & Mahesh Bhaskara Profile) */}
-      <EnterpriseShowcase />
-
       {/* Top 4 KPI Strip - Rotating Gold/Orange, Deep Red, Navy */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         
