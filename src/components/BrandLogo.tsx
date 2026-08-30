@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Edit3, Upload, RefreshCcw, Image as ImageIcon, X, Check } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Edit3, Upload, RefreshCcw, Image as ImageIcon, X, Check, AlertCircle } from 'lucide-react';
 
 const LOCAL_STORAGE_LOGO_KEY = 'shree_qa_custom_logo_v1';
+const LOGO_UPDATED_EVENT = 'shree_logo_updated';
 
-// Exact SVG Lotus-Sunburst Mandala with Devanagari 'श्री' matching media_1788055785667.jpg
+// Exact SVG Lotus-Sunburst Mandala with Devanagari 'श्री' matching the business card
 export const ShreeSymbol: React.FC<{ className?: string; size?: number }> = ({ 
   className = "w-full h-full", 
   size = 48 
@@ -121,15 +123,24 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputUrl, setInputUrl] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  const loadSavedLogo = () => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(LOCAL_STORAGE_LOGO_KEY);
-      if (saved) {
-        setCustomLogoUrl(saved);
-      }
+      setCustomLogoUrl(saved || null);
     }
+  };
+
+  useEffect(() => {
+    setMounted(true);
+    loadSavedLogo();
+
+    const handleUpdate = () => loadSavedLogo();
+    window.addEventListener(LOGO_UPDATED_EVENT, handleUpdate);
+    return () => window.removeEventListener(LOGO_UPDATED_EVENT, handleUpdate);
   }, []);
 
   const sizeClasses = {
@@ -139,12 +150,24 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
   }[size];
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage(null);
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        setErrorMessage('Please select a valid image file (PNG, JPG, SVG, WebP).');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setErrorMessage('Image size is too large. Please upload an image under 5MB.');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
         setPreviewUrl(result);
+      };
+      reader.onerror = () => {
+        setErrorMessage('Failed to read image file. Please try another image.');
       };
       reader.readAsDataURL(file);
     }
@@ -156,6 +179,7 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
       setCustomLogoUrl(logoToSave);
       if (typeof window !== 'undefined') {
         localStorage.setItem(LOCAL_STORAGE_LOGO_KEY, logoToSave);
+        window.dispatchEvent(new Event(LOGO_UPDATED_EVENT));
       }
     }
     setIsModalOpen(false);
@@ -165,26 +189,39 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
     setCustomLogoUrl(null);
     setPreviewUrl(null);
     setInputUrl('');
+    setErrorMessage(null);
     if (typeof window !== 'undefined') {
       localStorage.removeItem(LOCAL_STORAGE_LOGO_KEY);
+      window.dispatchEvent(new Event(LOGO_UPDATED_EVENT));
     }
     setIsModalOpen(false);
   };
 
+  const handleOpenModal = (e: React.MouseEvent) => {
+    if (!editable) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setPreviewUrl(customLogoUrl);
+    setInputUrl('');
+    setErrorMessage(null);
+    setIsModalOpen(true);
+  };
+
   return (
     <>
-      <div 
-        className="relative group cursor-pointer select-none shrink-0"
-        onClick={() => editable && setIsModalOpen(true)}
-        title={editable ? "Click to customize enterprise logo" : undefined}
+      <button 
+        type="button"
+        className="relative group select-none shrink-0 p-0 border-0 bg-transparent text-left cursor-pointer focus:outline-none"
+        onClick={handleOpenModal}
+        title={editable ? "Click to edit/upload custom enterprise logo" : undefined}
       >
-        <div className={`relative flex items-center justify-center ${sizeClasses} transition-transform group-hover:scale-105`}>
+        <div className={`relative flex items-center justify-center ${sizeClasses} transition-transform group-hover:scale-105 rounded-full`}>
           {customLogoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img 
               src={customLogoUrl} 
               alt="Shree QA Solutions Logo" 
-              className="w-full h-full object-cover rounded-full shadow-md border-2 border-[#E08A3E]"
+              className="w-full h-full object-cover rounded-full shadow-saas-xs border-2 border-amber-500"
             />
           ) : (
             // Exact Hindi "श्री" Mandala Symbol
@@ -193,49 +230,65 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
 
           {/* Hover Edit Overlay Icon */}
           {editable && (
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-full transition-opacity">
-              <Edit3 className="w-4 h-4 text-white" />
+            <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-full transition-opacity shadow-inner">
+              <Edit3 className="w-4 h-4 text-white drop-shadow-md" />
             </div>
           )}
         </div>
+      </button>
 
-        {/* Accessibility tag */}
-        {editable && (
-          <span className="sr-only">Click to edit logo</span>
-        )}
-      </div>
-
-      {/* Customize Logo Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
+      {/* Customize Logo Modal rendered via React Portal on document.body for highest z-index */}
+      {isModalOpen && mounted && typeof document !== 'undefined' && createPortal(
+        <div 
+          className="fixed inset-0 z-[99999] overflow-y-auto" 
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-            <div className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity" onClick={() => setIsModalOpen(false)} />
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+              onClick={() => setIsModalOpen(false)} 
+            />
 
-            <div className="relative transform overflow-hidden rounded-xl bg-[#FAF7F2] border border-[#DEC6A6] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+            {/* Modal Dialog */}
+            <div 
+              className="relative transform overflow-hidden rounded-2xl bg-white border border-slate-200 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md animate-fade-in"
+              onClick={(e) => e.stopPropagation()}
+            >
               
               {/* Modal Header */}
-              <div className="bg-[#1B2A4A] px-6 py-4 text-white relative">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E08A3E] via-[#D35D33] to-[#B33A2E]" />
+              <div className="bg-[#0F172A] px-6 py-4 text-white relative">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-serif text-lg font-bold text-white flex items-center space-x-2">
-                    <ImageIcon className="w-5 h-5 text-[#E08A3E]" />
-                    <span>Customize Enterprise Logo</span>
-                  </h3>
-                  <button onClick={() => setIsModalOpen(false)} className="text-gray-300 hover:text-white">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="p-2 rounded-xl bg-amber-500 text-slate-950 shadow-xs">
+                      <ImageIcon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-white">
+                        Customize Enterprise Logo
+                      </h3>
+                      <p className="text-[11px] text-slate-400">
+                        Upload your brand emblem or retain the Hindi "श्री" mark
+                      </p>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="button"
+                    onClick={() => setIsModalOpen(false)} 
+                    className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                  >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                <p className="text-xs text-slate-300 mt-1">
-                  Upload any company emblem or keep the authentic Devanagari Hindi "श्री" mark.
-                </p>
               </div>
 
               {/* Modal Body */}
-              <div className="p-6 space-y-5 text-xs text-[#1B2A4A]">
+              <div className="p-6 space-y-5 text-xs text-slate-800">
                 
                 {/* Live Preview */}
-                <div className="flex items-center justify-center space-x-4 p-4 rounded-lg bg-white border border-[#DEC6A6]">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden shrink-0">
+                <div className="flex items-center space-x-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden shrink-0 shadow-saas-xs border-2 border-slate-200 bg-white">
                     {previewUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
@@ -247,16 +300,26 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
                     )}
                   </div>
                   <div>
-                    <span className="font-bold text-sm block text-[#1B2A4A]">Current Logo Display</span>
-                    <span className="text-gray-500 text-[11px]">
-                      {previewUrl ? 'Uploaded file preview' : customLogoUrl ? 'Custom logo active' : 'Authentic Hindi "श्री" mandala'}
+                    <span className="font-bold text-xs block text-slate-900">Emblem Preview</span>
+                    <span className="text-slate-500 text-[11px] mt-0.5 block">
+                      {previewUrl ? 'Uploaded file preview ready' : customLogoUrl ? 'Custom uploaded logo active' : 'Authentic Hindi "श्री" 16-petal lotus mandala'}
                     </span>
                   </div>
                 </div>
 
+                {/* Error Banner */}
+                {errorMessage && (
+                  <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2">
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
                 {/* Option 1: File Upload */}
                 <div>
-                  <label className="font-semibold block mb-1.5 text-gray-700">Upload Logo Image File (PNG, JPG, SVG)</label>
+                  <label className="font-semibold block mb-1.5 text-slate-700">
+                    Upload Image File (PNG, JPG, SVG, WebP)
+                  </label>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -267,16 +330,18 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-md border-2 border-dashed border-[#DEC6A6] bg-white hover:bg-[#FAF7F2] font-semibold text-[#1B2A4A] transition-colors"
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 rounded-xl border-2 border-dashed border-slate-300 hover:border-amber-500 bg-slate-50 hover:bg-amber-50/30 font-semibold text-slate-800 transition-colors shadow-2xs cursor-pointer"
                   >
-                    <Upload className="w-4 h-4 text-[#B33A2E]" />
-                    <span>Choose File from Computer</span>
+                    <Upload className="w-4 h-4 text-amber-600" />
+                    <span>Choose Image from Computer</span>
                   </button>
                 </div>
 
                 {/* Option 2: Image URL */}
                 <div>
-                  <label className="font-semibold block mb-1 text-gray-700">Or Paste Image URL</label>
+                  <label className="font-semibold block mb-1 text-slate-700">
+                    Or Paste Image URL
+                  </label>
                   <input
                     type="url"
                     value={inputUrl}
@@ -285,36 +350,36 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
                       if (e.target.value.trim()) setPreviewUrl(e.target.value.trim());
                     }}
                     placeholder="https://example.com/logo.png"
-                    className="w-full rounded-md border border-[#DEC6A6] bg-white p-2 text-xs text-[#1B2A4A] focus:border-[#B33A2E] focus:ring-1 focus:ring-[#B33A2E]"
+                    className="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-xs text-slate-900 focus:ring-2 focus:ring-[#0F172A] focus:outline-none"
                   />
                 </div>
 
                 {/* Action Buttons */}
-                <div className="pt-3 border-t border-[#DEC6A6] flex items-center justify-between">
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
                   <button
                     type="button"
                     onClick={handleResetToDefault}
                     className="flex items-center space-x-1 text-xs text-[#B33A2E] hover:underline font-semibold"
                   >
                     <RefreshCcw className="w-3.5 h-3.5" />
-                    <span>Reset to Hindi "श्री" Mark</span>
+                    <span>Reset to Hindi "श्री"</span>
                   </button>
 
                   <div className="flex space-x-2">
                     <button
                       type="button"
                       onClick={() => setIsModalOpen(false)}
-                      className="px-3 py-1.5 rounded-md border border-[#DEC6A6] bg-white text-gray-700 hover:bg-gray-50 text-xs font-semibold"
+                      className="px-3.5 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-semibold"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSaveLogo}
-                      className="flex items-center space-x-1.5 px-4 py-1.5 rounded-md bg-[#B33A2E] hover:bg-[#8F281E] text-white text-xs font-semibold shadow-xs"
+                      className="flex items-center space-x-1.5 px-4 py-1.5 rounded-lg bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-bold shadow-saas-xs transition-colors"
                     >
                       <Check className="w-3.5 h-3.5" />
-                      <span>Apply Logo</span>
+                      <span>Save & Apply</span>
                     </button>
                   </div>
                 </div>
@@ -323,7 +388,8 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
 
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
