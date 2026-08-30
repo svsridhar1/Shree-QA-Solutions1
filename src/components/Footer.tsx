@@ -1,70 +1,99 @@
 'use client';
 
 import React from 'react';
-import { ShieldCheck, MapPin, Mail, Phone, Award, Globe } from 'lucide-react';
+import { ShieldCheck, MapPin, Mail, Phone, Award, Globe, Heart } from 'lucide-react';
+import { ShreeSymbol } from '@/components/BrandLogo';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="w-full bg-gradient-to-r from-[#E08A3E] via-[#D35D33] to-[#B33A2E] text-white shadow-inner mt-auto">
-      {/* Upper footer content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+    <footer className="w-full bg-[#0F172A] text-slate-400 border-t border-slate-800 mt-auto text-xs">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
-          {/* Company identity - Removed 'Pvt Ltd' */}
-          <div className="space-y-1.5 text-center md:text-left">
-            <div className="flex items-center justify-center md:justify-start space-x-2">
-              <span className="font-serif text-2xl font-bold tracking-tight text-white">
-                SHREE QA Solutions
-              </span>
+          {/* Brand Identity Column */}
+          <div className="space-y-3 md:col-span-1">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-white p-0.5 shadow-xs">
+                <ShreeSymbol />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif text-lg font-bold tracking-tight text-white leading-none">
+                  SHREE QA Solutions
+                </span>
+                <span className="text-[10px] font-serif italic text-amber-400 mt-0.5">
+                  Excelling the Excellence
+                </span>
+              </div>
             </div>
-            <p className="text-xs font-serif italic text-white/95">
-              "Excelling the Excellence" — CMMI Partner & Lead Appraisal Body
-            </p>
-            <p className="text-xs text-white/85">
-              Mahesh Bhaskara • Certified Lead Appraiser (CMMI DEV, SVC, SEC, SPM, PPL)
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Authorized CMMI Institute Partner & ISO/IEC Lead Appraisal Body.
             </p>
           </div>
 
-          {/* Location & Contact directly from business card */}
-          <div className="text-xs text-white/95 space-y-1 text-center">
-            <div className="flex items-center justify-center space-x-1.5 font-medium">
-              <MapPin className="w-3.5 h-3.5 text-amber-200 shrink-0" />
+          {/* Lead Appraiser Profile Column */}
+          <div className="space-y-2">
+            <span className="font-bold text-white uppercase text-[11px] tracking-wider block">
+              Certified Appraisal Leadership
+            </span>
+            <p className="text-white font-semibold">
+              Mahesh Bhaskara
+            </p>
+            <p className="text-[11px] text-slate-400">
+              Certified Lead Appraiser (CMMI DEV, SVC, SEC, SPM, PPL Domains)
+            </p>
+            <span className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">
+              16 Certified Standards
+            </span>
+          </div>
+
+          {/* Contact Details Column */}
+          <div className="space-y-2">
+            <span className="font-bold text-white uppercase text-[11px] tracking-wider block">
+              Corporate Office & Registry
+            </span>
+            <div className="flex items-start space-x-2 text-slate-300">
+              <MapPin className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
               <span>503, Sharada Nilayam, Jaya Nagar, Road No: 4, Kukatpally, Hyd - 72</span>
             </div>
-            <div className="flex items-center justify-center space-x-4 pt-1 flex-wrap gap-y-1">
-              <a href="tel:9177020007" className="flex items-center space-x-1 hover:underline">
-                <Phone className="w-3 h-3 text-amber-200" />
+            <div className="space-y-1 pt-1">
+              <a href="tel:9177020007" className="flex items-center space-x-1.5 hover:text-white transition-colors">
+                <Phone className="w-3.5 h-3.5 text-slate-400" />
                 <span>+91 9177020007</span>
               </a>
-              <a href="mailto:maheshbhaskara@shreeqasolutions.com" className="flex items-center space-x-1 hover:underline">
-                <Mail className="w-3 h-3 text-amber-200" />
+              <a href="mailto:maheshbhaskara@shreeqasolutions.com" className="flex items-center space-x-1.5 hover:text-white transition-colors">
+                <Mail className="w-3.5 h-3.5 text-slate-400" />
                 <span>maheshbhaskara@shreeqasolutions.com</span>
               </a>
             </div>
           </div>
 
-          {/* Appraisal Standards Badge & Website */}
-          <div className="flex flex-col items-center md:items-end space-y-2 text-xs text-white/95">
-            <a 
-              href="https://www.shreeqasolutions.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center space-x-1.5 bg-black/20 hover:bg-black/30 px-3.5 py-1.5 rounded-lg border border-white/30 text-white font-bold transition-colors"
-            >
-              <Globe className="w-3.5 h-3.5 text-amber-300" />
-              <span>www.shreeqasolutions.com</span>
-            </a>
-            <span className="text-[11px] text-white/80">
-              16 Certified Standards • CMMI, ISO & PCI QSA Frameworks
+          {/* Quick Links Column */}
+          <div className="space-y-2">
+            <span className="font-bold text-white uppercase text-[11px] tracking-wider block">
+              Verified Compliance Systems
             </span>
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              CMMI Maturity Level 2-5, ISO 9001, ISO 27001, ISO 20000, ISO 42001, PCI DSS & Cert-In Empanelment.
+            </p>
+            <div className="pt-2">
+              <a 
+                href="https://www.shreeqasolutions.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-colors border border-slate-700"
+              >
+                <Globe className="w-3.5 h-3.5 text-amber-400" />
+                <span>www.shreeqasolutions.com</span>
+              </a>
+            </div>
           </div>
 
         </div>
 
-        {/* Bottom copyright line */}
-        <div className="mt-6 pt-4 border-t border-white/20 flex flex-col sm:flex-row items-center justify-between text-[11px] text-white/80">
+        {/* Bottom Sub-footer */}
+        <div className="mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
           <p>© {new Date().getFullYear()} SHREE QA Solutions. All rights reserved.</p>
-          <p className="mt-1 sm:mt-0">Kukatpally, Hyderabad - 500072, Telangana, India</p>
+          <p>Executive Quality, Audit & Appraisal Intelligence Platform • Kukatpally, Hyderabad</p>
         </div>
       </div>
     </footer>

@@ -1,92 +1,157 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
 import { useCRM } from '@/lib/crmStore';
-import { useRouter } from 'next/navigation';
-import { BarChart3, PieChart, Layers } from 'lucide-react';
+import { ServiceType } from '@/types/crm';
+import { BarChart3, ShieldCheck, ArrowRight, Layers } from 'lucide-react';
 
 export const ServiceTypeChart: React.FC = () => {
-  const { metrics, clients } = useCRM();
-  const router = useRouter();
+  const { clients } = useCRM();
+  const [filterCategory, setFilterCategory] = useState<'all' | 'cmmi' | 'iso' | 'security'>('all');
 
-  // Color palette rotation: gold/orange, deep red, navy
-  const palette = [
-    { bg: 'bg-[#E08A3E]', text: 'text-[#C26F25]', light: 'bg-[#FFF7ED]', border: 'border-[#E08A3E]' },
-    { bg: 'bg-[#B33A2E]', text: 'text-[#B33A2E]', light: 'bg-[#FEF2F2]', border: 'border-[#B33A2E]' },
-    { bg: 'bg-[#1B2A4A]', text: 'text-[#1B2A4A]', light: 'bg-[#F0F4F8]', border: 'border-[#1B2A4A]' },
+  // Count distribution
+  const counts: Record<string, number> = {};
+  clients.forEach((c) => {
+    counts[c.service_type] = (counts[c.service_type] || 0) + 1;
+  });
+
+  const allStandards: { name: ServiceType; category: 'cmmi' | 'iso' | 'security'; color: string }[] = [
+    { name: 'CMMI DEV', category: 'cmmi', color: 'bg-amber-500' },
+    { name: 'CMMI SVC', category: 'cmmi', color: 'bg-amber-600' },
+    { name: 'CMMI SEC', category: 'cmmi', color: 'bg-amber-700' },
+    { name: 'CMMI PPL', category: 'cmmi', color: 'bg-orange-500' },
+    { name: 'CMMI SPM', category: 'cmmi', color: 'bg-orange-600' },
+    { name: 'ISMS', category: 'iso', color: 'bg-[#0F172A]' },
+    { name: 'QMS', category: 'iso', color: 'bg-blue-600' },
+    { name: 'ITSM', category: 'iso', color: 'bg-indigo-600' },
+    { name: 'AIMS', category: 'iso', color: 'bg-purple-600' },
+    { name: 'BCMS', category: 'iso', color: 'bg-teal-600' },
+    { name: 'PIMS', category: 'iso', color: 'bg-cyan-600' },
+    { name: 'PCI DSS', category: 'security', color: 'bg-rose-600' },
+    { name: 'HIPAA', category: 'security', color: 'bg-emerald-600' },
+    { name: 'GDPR', category: 'security', color: 'bg-slate-700' },
+    { name: 'SOC', category: 'security', color: 'bg-sky-600' },
+    { name: 'Cert-In', category: 'security', color: 'bg-red-700' },
   ];
 
-  const maxCount = Math.max(...metrics.serviceDistribution.map((d) => d.count), 1);
-  const total = clients.length || 1;
+  const filteredStandards = allStandards.filter((s) => {
+    if (filterCategory === 'all') return true;
+    return s.category === filterCategory;
+  });
 
-  const handleBarClick = (service: string) => {
-    router.push(`/clients?service=${encodeURIComponent(service)}`);
-  };
+  const maxCount = Math.max(...allStandards.map((s) => counts[s.name] || 0), 1);
 
   return (
-    <div className="bg-[#FAF7F2] rounded-xl border border-[#DEC6A6] p-6 shadow-xs">
+    <div className="saas-card p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E6DCce] gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
         <div className="flex items-center space-x-2.5">
-          <div className="p-2 rounded-lg bg-[#1B2A4A] text-white">
-            <BarChart3 className="w-5 h-5 text-[#E08A3E]" />
+          <div className="p-2 rounded-xl bg-slate-900 text-amber-400 shadow-saas-xs">
+            <BarChart3 className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-serif text-lg font-bold text-[#1B2A4A]">
-              Appraisal Portfolio by Standard & Service Type
+            <h3 className="text-sm font-bold text-slate-900">
+              Appraisal Portfolio Distribution
             </h3>
-            <p className="text-xs text-gray-600">
-              Distribution of active CMMI maturity levels, ISO management standards, and security frameworks
+            <p className="text-xs text-slate-500">
+              Breakdown across 16 accredited certification tracks
             </p>
           </div>
         </div>
-        <span className="text-xs font-semibold px-3 py-1 bg-[#EBDDC9]/60 text-[#1B2A4A] rounded-full border border-[#DEC6A6]">
-          Total Engagements: {clients.length}
-        </span>
+
+        {/* Category Pills */}
+        <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg self-start sm:self-auto text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setFilterCategory('all')}
+            className={`px-2.5 py-1 rounded-md transition-all ${
+              filterCategory === 'all'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            All Tracks ({allStandards.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterCategory('cmmi')}
+            className={`px-2.5 py-1 rounded-md transition-all ${
+              filterCategory === 'cmmi'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            CMMI
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterCategory('iso')}
+            className={`px-2.5 py-1 rounded-md transition-all ${
+              filterCategory === 'iso'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            ISO / Governance
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterCategory('security')}
+            className={`px-2.5 py-1 rounded-md transition-all ${
+              filterCategory === 'security'
+                ? 'bg-white text-slate-900 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Security & QSA
+          </button>
+        </div>
       </div>
 
-      {/* Horizontal Bar Chart List */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-        {metrics.serviceDistribution.map((item, idx) => {
-          const colorTheme = palette[idx % palette.length];
-          const percentage = Math.round((item.count / total) * 100);
-          const barWidthPercent = Math.max(8, Math.round((item.count / maxCount) * 100));
+      {/* Modern Horizontal Bar Grid */}
+      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5">
+        {filteredStandards.map((std) => {
+          const count = counts[std.name] || 0;
+          const percentage = Math.round((count / maxCount) * 100);
 
           return (
-            <div
-              key={item.service}
-              onClick={() => handleBarClick(item.service)}
-              className="flex flex-col space-y-1.5 p-2.5 rounded-lg hover:bg-[#EBDDC9]/30 cursor-pointer transition-colors group"
+            <Link
+              key={std.name}
+              href={`/clients?service=${encodeURIComponent(std.name)}`}
+              className="flex items-center space-x-3 group text-xs hover:bg-slate-50 p-1.5 rounded-lg transition-colors"
             >
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-[#1B2A4A] group-hover:text-[#B33A2E] transition-colors flex items-center space-x-1.5">
-                  <span className={`w-2 h-2 rounded-full ${colorTheme.bg}`} />
-                  <span>{item.service}</span>
-                </span>
-                <div className="flex items-center space-x-2">
-                  <span className="text-gray-500 text-[11px] font-medium">{percentage}%</span>
-                  <span className="font-bold text-[#1B2A4A] px-2 py-0.5 rounded bg-white border border-[#DEC6A6]">
-                    {item.count} {item.count === 1 ? 'client' : 'clients'}
-                  </span>
-                </div>
+              <div className="w-24 font-semibold text-slate-700 group-hover:text-slate-900 truncate">
+                {std.name}
               </div>
 
-              {/* Progress track */}
-              <div className="w-full h-3 bg-[#EBDDC9]/50 rounded-full overflow-hidden p-0.5 border border-[#DEC6A6]/40">
+              {/* Bar track */}
+              <div className="flex-1 bg-slate-100 rounded-full h-2.5 overflow-hidden p-0.5 border border-slate-200/50">
                 <div
-                  className={`h-full rounded-full ${colorTheme.bg} transition-all duration-500 ease-out group-hover:opacity-90`}
-                  style={{ width: `${barWidthPercent}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${std.color}`}
+                  style={{ width: `${Math.max(count > 0 ? 12 : 2, percentage)}%` }}
                 />
               </div>
-            </div>
+
+              {/* Value badge */}
+              <div className="w-8 text-right font-bold text-slate-900 text-xs">
+                {count}
+              </div>
+            </Link>
           );
         })}
       </div>
 
-      {/* Footer hint */}
-      <div className="mt-6 pt-3 border-t border-[#E6DCce] flex items-center justify-between text-[11px] text-gray-500">
-        <span>Click any standard bar to filter the client directory</span>
-        <span className="italic font-serif text-[#B33A2E]">Shree QA Solutions • Authorized CMMI & ISO Registry</span>
+      {/* Footer summary */}
+      <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span>Lead Appraiser: Mahesh Bhaskara • Kukatpally, Hyd</span>
+        <Link 
+          href="/clients" 
+          className="font-semibold text-slate-900 hover:text-amber-600 flex items-center space-x-1"
+        >
+          <span>View Detailed Directory</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
       </div>
     </div>
   );

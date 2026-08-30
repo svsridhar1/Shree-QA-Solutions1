@@ -14,19 +14,17 @@ import {
   Filter, 
   Plus, 
   Building2, 
-  ShieldAlert, 
   AlertTriangle, 
   Clock, 
   Flame, 
-  Calendar, 
   User, 
   ExternalLink,
   RotateCcw,
   X,
-  Layers,
-  Sparkles,
   Mail,
-  FileSpreadsheet
+  FileSpreadsheet,
+  CheckCircle2,
+  ChevronDown
 } from 'lucide-react';
 
 function ClientsContent() {
@@ -60,6 +58,10 @@ function ClientsContent() {
     const serviceParam = searchParams.get('service');
     if (serviceParam) {
       setSelectedService(serviceParam);
+    }
+    const stageParam = searchParams.get('stage');
+    if (stageParam) {
+      setSelectedStage(stageParam);
     }
     const selectedId = searchParams.get('selected');
     if (selectedId && clients.length > 0) {
@@ -123,8 +125,8 @@ function ClientsContent() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="flex flex-col items-center space-y-3">
-          <div className="w-10 h-10 border-4 border-[#B33A2E] border-t-transparent rounded-full animate-spin" />
-          <span className="font-serif text-sm font-semibold text-[#1B2A4A]">Loading Client Registry...</span>
+          <div className="w-9 h-9 border-3 border-[#0F172A] border-t-amber-500 rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-slate-700">Loading Client Directory...</span>
         </div>
       </div>
     );
@@ -137,25 +139,25 @@ function ClientsContent() {
 
   const getStageBadge = (stage: ClientStage) => {
     switch (stage) {
-      case 'lead':
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-900 border border-amber-300">Lead</span>;
-      case 'in_appraisal':
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-900 border border-blue-300">In Appraisal</span>;
       case 'active':
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300">Active Certified</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">ACTIVE CERTIFIED</span>;
+      case 'in_appraisal':
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-300">IN APPRAISAL</span>;
       case 'renewal_due':
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-900 border border-rose-300">Renewal Due</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">RENEWAL DUE</span>;
+      case 'lead':
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">LEAD INQUIRY</span>;
       case 'lapsed':
-        return <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-800 border border-gray-300">Lapsed</span>;
+        return <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200">LAPSED</span>;
     }
   };
 
   const formatExpiry = (dateStr: string | null) => {
-    if (!dateStr) return <span className="text-gray-400">—</span>;
+    if (!dateStr) return <span className="text-slate-400">—</span>;
     try {
       const d = new Date(dateStr);
       return (
-        <span className="font-mono text-xs text-[#1B2A4A]">
+        <span className="font-mono text-xs text-slate-700 font-medium">
           {d.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
         </span>
       );
@@ -165,79 +167,75 @@ function ClientsContent() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       
       {/* Page Header */}
-      <div className="bg-[#FAF7F2] rounded-xl border border-[#DEC6A6] p-6 shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E08A3E] via-[#D35D33] to-[#B33A2E]" />
-        
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#1B2A4A] tracking-tight">
-              Client & Appraisal Directory
-            </h1>
-            <p className="text-xs sm:text-sm text-gray-700 mt-1">
-              Master repository of appraisal engagements, certification timelines, Excel/CSV bulk imports, and WhatsApp interactions.
-            </p>
-          </div>
-
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-md bg-[#B33A2E] hover:bg-[#8F281E] text-white text-xs font-bold shadow-xs transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Register / Import Clients</span>
-          </button>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            Client & Appraisal Directory
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Master repository of {clients.length} enterprise client engagements, appraisal lifecycles, and certification timelines.
+          </p>
         </div>
+
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center space-x-2 px-4 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-saas-sm transition-all"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Register / Import Clients</span>
+        </button>
       </div>
 
       {/* Active Dashboard Risk Filter Banner */}
       {activeRiskFilter && (
-        <div className="p-4 rounded-xl bg-[#FFF8F6] border-2 border-[#B33A2E]/50 flex items-center justify-between shadow-xs">
+        <div className="p-4 rounded-xl bg-rose-50/70 border border-rose-200 flex items-center justify-between shadow-saas-xs">
           <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-lg bg-[#B33A2E] text-white">
-              <AlertTriangle className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-rose-600 text-white">
+              <AlertTriangle className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-serif font-bold text-sm text-[#B33A2E]">
-                  Filtered By Dashboard Risk Monitor:
+                <span className="font-bold text-xs text-rose-900">
+                  Filtered by Risk Monitor:
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#B33A2E] text-white uppercase">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-600 text-white uppercase">
                   {activeRiskFilter.replace(/_/g, ' ')}
                 </span>
               </div>
-              <p className="text-xs text-gray-600 mt-0.5">
-                Showing {filteredClients.length} matching client {filteredClients.length === 1 ? 'record' : 'records'} requiring appraisal attention.
+              <p className="text-xs text-rose-700 mt-0.5">
+                Showing {filteredClients.length} {filteredClients.length === 1 ? 'client' : 'clients'} requiring immediate appraisal attention.
               </p>
             </div>
           </div>
 
           <button
             onClick={clearRiskFilter}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md bg-white border border-[#DEC6A6] text-xs font-semibold text-[#1B2A4A] hover:bg-gray-50 transition-colors"
+            className="flex items-center space-x-1 px-3 py-1.5 rounded-md bg-white border border-rose-200 text-xs font-semibold text-rose-700 hover:bg-rose-50 transition-colors"
           >
-            <X className="w-4 h-4 text-[#B33A2E]" />
+            <X className="w-3.5 h-3.5" />
             <span>Clear Filter</span>
           </button>
         </div>
       )}
 
-      {/* Filter Controls Bar */}
-      <div className="bg-[#FAF7F2] rounded-xl border border-[#DEC6A6] p-4 shadow-xs">
+      {/* Filter & Search Bar */}
+      <div className="saas-card p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           
           {/* Search bar */}
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-              <Search className="w-4 h-4 text-[#1B2A4A]/60" />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <Search className="w-3.5 h-3.5" />
             </div>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search company, appraiser, service..."
-              className="block w-full pl-9 pr-3 py-2 border border-[#DEC6A6] rounded-md text-xs text-[#1B2A4A] bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#B33A2E] focus:border-[#B33A2E]"
+              className="block w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-xs text-slate-900 bg-slate-50 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all"
             />
           </div>
 
@@ -246,13 +244,13 @@ function ClientsContent() {
             <select
               value={selectedStage}
               onChange={(e) => setSelectedStage(e.target.value)}
-              className="block w-full px-3 py-2 border border-[#DEC6A6] rounded-md text-xs text-[#1B2A4A] bg-white focus:outline-none focus:ring-1 focus:ring-[#B33A2E] focus:border-[#B33A2E]"
+              className="block w-full px-3 py-2 border border-slate-200 rounded-lg text-xs text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all font-medium"
             >
               <option value="all">All Stages ({clients.length})</option>
-              <option value="lead">Lead</option>
-              <option value="in_appraisal">In Appraisal</option>
               <option value="active">Active Certified</option>
+              <option value="in_appraisal">In Appraisal</option>
               <option value="renewal_due">Renewal Due</option>
+              <option value="lead">Lead Inquiry</option>
               <option value="lapsed">Lapsed</option>
             </select>
           </div>
@@ -262,32 +260,32 @@ function ClientsContent() {
             <select
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
-              className="block w-full px-3 py-2 border border-[#DEC6A6] rounded-md text-xs text-[#1B2A4A] bg-white focus:outline-none focus:ring-1 focus:ring-[#B33A2E] focus:border-[#B33A2E]"
+              className="block w-full px-3 py-2 border border-slate-200 rounded-lg text-xs text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition-all font-medium"
             >
-              <option value="all">All Service Standards</option>
+              <option value="all">All 16 Service Standards</option>
               <option value="CMMI DEV">CMMI DEV</option>
               <option value="CMMI SVC">CMMI SVC</option>
               <option value="CMMI SEC">CMMI SEC</option>
               <option value="CMMI PPL">CMMI PPL</option>
               <option value="CMMI SPM">CMMI SPM</option>
+              <option value="ISMS">ISMS (ISO 27001)</option>
+              <option value="QMS">QMS (ISO 9001)</option>
+              <option value="ITSM">ITSM (ISO 20000)</option>
+              <option value="AIMS">AIMS (ISO 42001 AI)</option>
+              <option value="BCMS">BCMS (ISO 22301)</option>
+              <option value="PIMS">PIMS (ISO 27701)</option>
               <option value="PCI DSS">PCI DSS</option>
               <option value="HIPAA">HIPAA</option>
               <option value="GDPR">GDPR</option>
               <option value="SOC">SOC</option>
-              <option value="QMS">QMS (ISO 9001)</option>
-              <option value="ISMS">ISMS (ISO 27001)</option>
-              <option value="ITSM">ITSM (ISO 20000)</option>
-              <option value="AIMS">AIMS (ISO 42001)</option>
-              <option value="BCMS">BCMS (ISO 22301)</option>
-              <option value="PIMS">PIMS (ISO 27701)</option>
               <option value="Cert-In">Cert-In</option>
             </select>
           </div>
 
-          {/* Reset Filters */}
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500 font-medium">
-              Showing {filteredClients.length} of {clients.length} clients
+          {/* Filter Status Reset */}
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs text-slate-500 font-medium">
+              Showing <strong>{filteredClients.length}</strong> of {clients.length}
             </span>
             {(searchQuery || selectedStage !== 'all' || selectedService !== 'all' || activeRiskFilter) && (
               <button
@@ -298,10 +296,10 @@ function ClientsContent() {
                   setActiveRiskFilter(null);
                   router.replace('/clients');
                 }}
-                className="text-xs text-[#B33A2E] font-semibold hover:underline flex items-center space-x-1"
+                className="text-xs text-amber-600 font-semibold hover:underline flex items-center space-x-1"
               >
                 <RotateCcw className="w-3 h-3" />
-                <span>Reset</span>
+                <span>Reset Filters</span>
               </button>
             )}
           </div>
@@ -309,44 +307,44 @@ function ClientsContent() {
         </div>
       </div>
 
-      {/* Clients Table */}
-      <div className="bg-[#FAF7F2] rounded-xl border border-[#DEC6A6] shadow-xs overflow-hidden">
+      {/* Enterprise SaaS Table */}
+      <div className="saas-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-[#DEC6A6]/60">
-            <thead className="bg-[#1B2A4A] text-white">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-50 text-slate-700 sticky top-0">
               <tr>
-                <th scope="col" className="px-5 py-3.5 text-left text-xs font-serif font-bold tracking-wider">
-                  Company / Organization
+                <th scope="col" className="px-6 py-3.5 text-left text-xs font-bold tracking-wider">
+                  Organization / Client
                 </th>
-                <th scope="col" className="px-4 py-3.5 text-left text-xs font-serif font-bold tracking-wider">
-                  Service Track
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold tracking-wider">
+                  Standard Track
                 </th>
-                <th scope="col" className="px-4 py-3.5 text-left text-xs font-serif font-bold tracking-wider">
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold tracking-wider">
                   Appraisal Stage
                 </th>
-                <th scope="col" className="px-4 py-3.5 text-left text-xs font-serif font-bold tracking-wider">
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold tracking-wider">
                   Lead Appraiser
                 </th>
-                <th scope="col" className="px-4 py-3.5 text-left text-xs font-serif font-bold tracking-wider">
-                  Last Activity
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold tracking-wider">
+                  Last Contact
                 </th>
-                <th scope="col" className="px-4 py-3.5 text-left text-xs font-serif font-bold tracking-wider">
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold tracking-wider">
                   Cert Expiry
                 </th>
-                <th scope="col" className="px-4 py-3.5 text-left text-xs font-serif font-bold tracking-wider">
+                <th scope="col" className="px-4 py-3.5 text-left text-xs font-bold tracking-wider">
                   Risk Status
                 </th>
-                <th scope="col" className="px-4 py-3.5 text-right text-xs font-serif font-bold tracking-wider">
-                  Quick Actions
+                <th scope="col" className="px-6 py-3.5 text-right text-xs font-bold tracking-wider">
+                  Actions
                 </th>
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-[#EBDDC9] bg-white">
+            <tbody className="divide-y divide-slate-100 bg-white">
               {filteredClients.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-xs text-gray-500 bg-[#FAF7F2]">
-                    No client records match the selected filter criteria.
+                  <td colSpan={8} className="px-6 py-14 text-center text-xs text-slate-500">
+                    No client records match the current filter criteria.
                   </td>
                 </tr>
               ) : (
@@ -360,28 +358,28 @@ function ClientsContent() {
                     <tr
                       key={client.id}
                       onClick={() => setSelectedClient(client)}
-                      className="hover:bg-[#FFFBF5] cursor-pointer transition-colors group"
+                      className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                     >
-                      {/* Company Name */}
-                      <td className="px-5 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-2.5">
-                          <div className="w-8 h-8 rounded-full bg-[#EBDDC9]/60 flex items-center justify-center text-[#1B2A4A] font-bold text-xs border border-[#DEC6A6]">
+                      {/* Organization Name */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-800 font-bold text-xs border border-slate-200">
                             {client.name.substring(0, 2).toUpperCase()}
                           </div>
                           <div>
-                            <div className="font-bold text-xs text-[#1B2A4A] group-hover:text-[#B33A2E] transition-colors">
+                            <div className="font-bold text-xs text-slate-900 group-hover:text-amber-600 transition-colors">
                               {client.name}
                             </div>
-                            <div className="text-[11px] text-gray-500">
+                            <div className="text-[10px] text-slate-400 font-mono">
                               ID: {client.id}
                             </div>
                           </div>
                         </div>
                       </td>
 
-                      {/* Service Standard */}
+                      {/* Service Standard Track */}
                       <td className="px-4 py-4 whitespace-nowrap">
-                        <span className="px-2.5 py-1 rounded text-xs font-bold bg-[#EBDDC9]/60 text-[#1B2A4A] border border-[#DEC6A6]">
+                        <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-800 border border-slate-200">
                           {client.service_type}
                         </span>
                       </td>
@@ -391,29 +389,29 @@ function ClientsContent() {
                         <div className="space-y-1">
                           {getStageBadge(client.stage)}
                           {client.stage === 'in_appraisal' && client.pipeline_substage && (
-                            <div className="text-[10px] font-semibold text-[#1B2A4A] uppercase tracking-wide">
-                              Substage: {client.pipeline_substage.replace('_', ' ')}
+                            <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">
+                              Substage: {client.pipeline_substage.replace(/_/g, ' ')}
                             </div>
                           )}
                         </div>
                       </td>
 
                       {/* Lead Owner */}
-                      <td className="px-4 py-4 whitespace-nowrap text-xs text-gray-700">
+                      <td className="px-4 py-4 whitespace-nowrap text-xs text-slate-700 font-medium">
                         <div className="flex items-center space-x-1.5">
-                          <User className="w-3.5 h-3.5 text-gray-400" />
+                          <User className="w-3.5 h-3.5 text-slate-400" />
                           <span>{client.owner}</span>
                         </div>
                       </td>
 
                       {/* Last Activity */}
                       <td className="px-4 py-4 whitespace-nowrap text-xs">
-                        <span className={`font-semibold ${daysSinceActivity > 14 ? 'text-[#B33A2E]' : 'text-gray-700'}`}>
+                        <span className={`font-semibold ${daysSinceActivity > 14 ? 'text-rose-600' : 'text-slate-700'}`}>
                           {daysSinceActivity} {daysSinceActivity === 1 ? 'day' : 'days'} ago
                         </span>
                       </td>
 
-                      {/* Cert Expiry */}
+                      {/* Expiry */}
                       <td className="px-4 py-4 whitespace-nowrap">
                         {formatExpiry(client.cert_expiry_date)}
                       </td>
@@ -421,37 +419,36 @@ function ClientsContent() {
                       {/* Risk Badges */}
                       <td className="px-4 py-4 whitespace-nowrap">
                         {renewalAtRisk && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
                             <AlertTriangle className="w-3 h-3 mr-1" />
-                            Renewal at Risk
+                            Renewal Risk
                           </span>
                         )}
                         {coldLead && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
                             <Flame className="w-3 h-3 mr-1" />
                             Cold Lead
                           </span>
                         )}
                         {stalled && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
                             <Clock className="w-3 h-3 mr-1" />
                             Stalled
                           </span>
                         )}
                         {!renewalAtRisk && !coldLead && !stalled && (
-                          <span className="text-[11px] text-emerald-700 font-medium">
-                            Healthy
+                          <span className="text-[11px] text-emerald-600 font-medium flex items-center space-x-1">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Healthy</span>
                           </span>
                         )}
                       </td>
 
-                      {/* Actions with WhatsApp & AI Email */}
-                      <td className="px-4 py-4 whitespace-nowrap text-right text-xs font-semibold">
-                        <div className="flex items-center justify-end space-x-1.5">
-                          {/* WhatsApp Trigger */}
+                      {/* Actions */}
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-xs">
+                        <div className="flex items-center justify-end space-x-2">
                           <WhatsAppButton client={client} size="icon" />
 
-                          {/* AI Email Trigger */}
                           <button
                             type="button"
                             onClick={(e) => {
@@ -459,18 +456,17 @@ function ClientsContent() {
                               setEmailClient(client);
                             }}
                             title={`AI Status Email for ${client.name}`}
-                            className="p-1.5 rounded-md bg-[#B33A2E]/10 text-[#B33A2E] hover:bg-[#B33A2E] hover:text-white transition-colors"
+                            className="p-1.5 rounded-md bg-slate-100 text-slate-700 hover:bg-[#0F172A] hover:text-white transition-colors"
                           >
                             <Mail className="w-4 h-4" />
                           </button>
 
-                          {/* View Drawer */}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedClient(client);
                             }}
-                            className="px-2.5 py-1 rounded bg-[#FAF7F2] hover:bg-[#EBDDC9] text-[#1B2A4A] border border-[#DEC6A6] transition-colors"
+                            className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold border border-slate-200 transition-colors"
                           >
                             View
                           </button>
@@ -512,7 +508,7 @@ export default function ClientsPage() {
   return (
     <Suspense fallback={
       <div className="min-h-[70vh] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-[#B33A2E] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#0F172A] border-t-amber-500 rounded-full animate-spin" />
       </div>
     }>
       <ClientsContent />

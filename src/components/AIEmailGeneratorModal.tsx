@@ -11,11 +11,7 @@ import {
   Send, 
   X, 
   FileText, 
-  RotateCcw, 
-  CheckCircle2, 
-  ShieldCheck,
-  Building2,
-  ExternalLink
+  CheckCircle2
 } from 'lucide-react';
 
 interface AIEmailGeneratorModalProps {
@@ -227,52 +223,51 @@ Phone: +91 9177020007 | Email: maheshbhaskara@shreeqasolutions.com`;
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity" onClick={onClose} />
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity" onClick={onClose} />
 
-        <div className="relative transform overflow-hidden rounded-xl bg-[#FAF7F2] border border-[#DEC6A6] text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+        <div className="relative transform overflow-hidden rounded-2xl bg-white border border-slate-200 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl animate-fade-in">
           
           {/* Header */}
-          <div className="bg-[#1B2A4A] px-6 py-4 text-white relative">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#E08A3E] via-[#D35D33] to-[#B33A2E]" />
+          <div className="bg-[#0F172A] px-6 py-5 text-white relative">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2.5">
-                <div className="p-2 rounded-lg bg-[#B33A2E] text-white">
-                  <Mail className="w-5 h-5 text-[#E08A3E]" />
+                <div className="p-2 rounded-xl bg-amber-500 text-slate-950 shadow-xs">
+                  <Mail className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-white flex items-center space-x-2">
-                    <span>AI Appraisal Email Generator</span>
-                    <Sparkles className="w-4 h-4 text-amber-300" />
+                  <h3 className="text-base font-bold text-white flex items-center space-x-2">
+                    <span>AI Status Email Generator</span>
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   </h3>
-                  <p className="text-xs text-slate-300">
+                  <p className="text-xs text-slate-400">
                     Auto-generated for <strong className="text-white">{client?.name}</strong> ({client?.service_type} • {String(client?.stage || '').replace(/_/g, ' ')})
                   </p>
                 </div>
               </div>
 
-              <button onClick={onClose} className="text-gray-300 hover:text-white">
+              <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-lg">
                 <X className="w-5 h-5" />
               </button>
             </div>
           </div>
 
           {/* Body */}
-          <div className="p-6 space-y-4 text-xs text-[#1B2A4A]">
+          <div className="p-6 space-y-4 text-xs text-slate-900">
             
             {/* Template Selector Pills */}
             <div>
-              <label className="font-bold text-gray-700 block mb-1.5 flex items-center space-x-1">
-                <FileText className="w-3.5 h-3.5 text-[#B33A2E]" />
-                <span>Select Email Purpose / Customer Status Template:</span>
+              <label className="font-bold text-slate-700 block mb-1.5 flex items-center space-x-1">
+                <FileText className="w-3.5 h-3.5 text-slate-400" />
+                <span>Select Customer Lifecycle Template:</span>
               </label>
               <div className="flex flex-wrap gap-1.5">
                 <button
                   type="button"
                   onClick={() => handleTemplateChange('renewal_reminder')}
-                  className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                     selectedTemplate === 'renewal_reminder'
-                      ? 'bg-[#B33A2E] text-white shadow-xs'
-                      : 'bg-white border border-[#DEC6A6] text-[#1B2A4A] hover:bg-[#FAF7F2]'
+                      ? 'bg-[#0F172A] text-white shadow-saas-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   🔄 Renewal Reminder
@@ -280,10 +275,10 @@ Phone: +91 9177020007 | Email: maheshbhaskara@shreeqasolutions.com`;
                 <button
                   type="button"
                   onClick={() => handleTemplateChange('initial_proposal')}
-                  className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                     selectedTemplate === 'initial_proposal'
-                      ? 'bg-[#1B2A4A] text-white shadow-xs'
-                      : 'bg-white border border-[#DEC6A6] text-[#1B2A4A] hover:bg-[#FAF7F2]'
+                      ? 'bg-[#0F172A] text-white shadow-saas-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   📄 Commercial Proposal
@@ -291,21 +286,21 @@ Phone: +91 9177020007 | Email: maheshbhaskara@shreeqasolutions.com`;
                 <button
                   type="button"
                   onClick={() => handleTemplateChange('appraisal_milestone')}
-                  className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                     selectedTemplate === 'appraisal_milestone'
-                      ? 'bg-[#E08A3E] text-white shadow-xs'
-                      : 'bg-white border border-[#DEC6A6] text-[#1B2A4A] hover:bg-[#FAF7F2]'
+                      ? 'bg-[#0F172A] text-white shadow-saas-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  🚀 Milestone & PIID Request
+                  🚀 Milestone & PIIDs
                 </button>
                 <button
                   type="button"
                   onClick={() => handleTemplateChange('surveillance_audit')}
-                  className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                     selectedTemplate === 'surveillance_audit'
-                      ? 'bg-[#00838F] text-white shadow-xs'
-                      : 'bg-white border border-[#DEC6A6] text-[#1B2A4A] hover:bg-[#FAF7F2]'
+                      ? 'bg-[#0F172A] text-white shadow-saas-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
                   🛡️ Annual Surveillance
@@ -313,56 +308,56 @@ Phone: +91 9177020007 | Email: maheshbhaskara@shreeqasolutions.com`;
                 <button
                   type="button"
                   onClick={() => handleTemplateChange('win_back')}
-                  className={`px-3 py-1.5 rounded-md font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
                     selectedTemplate === 'win_back'
-                      ? 'bg-[#5D4037] text-white shadow-xs'
-                      : 'bg-white border border-[#DEC6A6] text-[#1B2A4A] hover:bg-[#FAF7F2]'
+                      ? 'bg-[#0F172A] text-white shadow-saas-xs'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
-                  🤝 Win-Back Campaign
+                  🤝 Win-Back
                 </button>
               </div>
             </div>
 
             {/* Subject Input */}
             <div>
-              <label className="font-bold text-gray-700 block mb-1">Email Subject</label>
+              <label className="font-semibold text-slate-700 block mb-1">Subject</label>
               <input
                 type="text"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full rounded-md border border-[#DEC6A6] bg-white p-2 text-xs font-semibold text-[#1B2A4A] focus:border-[#B33A2E] focus:ring-1 focus:ring-[#B33A2E]"
+                className="w-full rounded-lg border border-slate-200 bg-white p-2.5 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
               />
             </div>
 
             {/* Body Textarea */}
             <div>
-              <label className="font-bold text-gray-700 block mb-1">Email Message Body</label>
+              <label className="font-semibold text-slate-700 block mb-1">Email Body</label>
               <textarea
-                rows={9}
+                rows={8}
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                className="w-full rounded-md border border-[#DEC6A6] bg-white p-3 text-xs text-[#1B2A4A] font-mono leading-relaxed focus:border-[#B33A2E] focus:ring-1 focus:ring-[#B33A2E]"
+                className="w-full rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-900 font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-slate-900"
               />
             </div>
 
             {/* Notification alert if logged */}
             {isLogged && (
-              <div className="p-2.5 rounded-md bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs flex items-center space-x-2">
+              <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs flex items-center space-x-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Logged in CRM Activity Timeline! Client's last contact timestamp has been refreshed.</span>
               </div>
             )}
 
             {/* Action Bar */}
-            <div className="pt-3 border-t border-[#DEC6A6] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={handleLogAsActivity}
                 disabled={isLogged}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md border border-[#DEC6A6] bg-white hover:bg-gray-50 text-xs font-semibold text-[#1B2A4A] disabled:opacity-50"
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 disabled:opacity-50"
               >
-                <CheckCircle2 className={`w-3.5 h-3.5 ${isLogged ? 'text-emerald-600' : 'text-gray-400'}`} />
+                <CheckCircle2 className={`w-3.5 h-3.5 ${isLogged ? 'text-emerald-600' : 'text-slate-400'}`} />
                 <span>{isLogged ? 'Activity Logged' : 'Log Email in Activity Timeline'}</span>
               </button>
 
@@ -370,19 +365,19 @@ Phone: +91 9177020007 | Email: maheshbhaskara@shreeqasolutions.com`;
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-md border border-[#DEC6A6] bg-white hover:bg-[#FAF7F2] text-xs font-semibold text-[#1B2A4A] transition-colors"
+                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-gray-500" />}
-                  <span>{copied ? 'Copied!' : 'Copy Text'}</span>
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                  <span>{copied ? 'Copied!' : 'Copy'}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={handleMailto}
-                  className="flex items-center space-x-1.5 px-4 py-2 rounded-md bg-[#B33A2E] hover:bg-[#8F281E] text-white text-xs font-bold shadow-xs transition-colors"
+                  className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-bold shadow-saas-xs transition-colors"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Launch in Mail App</span>
+                  <span>Launch Mail App</span>
                 </button>
               </div>
             </div>

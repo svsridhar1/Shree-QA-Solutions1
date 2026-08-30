@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { useCRM } from '@/lib/crmStore';
+import Link from 'next/link';
 import { RiskFilterType } from '@/types/crm';
-import { AlertTriangle, Clock, Flame, ArrowRight, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, Clock, Flame, ArrowRight, ShieldAlert, Sparkles } from 'lucide-react';
 
 interface RiskWidgetCardProps {
   type: 'renewals_at_risk' | 'cold_leads' | 'stalled_engagements';
@@ -12,101 +11,88 @@ interface RiskWidgetCardProps {
 }
 
 export const RiskWidgetCard: React.FC<RiskWidgetCardProps> = ({ type, count }) => {
-  const router = useRouter();
-  const { setActiveRiskFilter } = useCRM();
-
   const config = {
     renewals_at_risk: {
       title: 'Renewals at Risk',
-      subtitle: 'Expiry ≤ 90 days & No activity in 14 days',
-      theme: 'red',
+      severity: 'CRITICAL',
+      severityBg: 'bg-rose-50 text-rose-700 border-rose-200',
+      accentColor: 'border-l-rose-500',
       icon: AlertTriangle,
-      borderClass: 'border-[#B33A2E]/40 hover:border-[#B33A2E]',
-      bgClass: 'bg-[#FFF8F6] hover:bg-[#FFF2EE]',
-      headerColor: 'text-[#B33A2E]',
-      badgeBg: 'bg-[#B33A2E] text-white',
-      accentBar: 'bg-[#B33A2E]',
-      description: 'Active client certifications nearing expiration without recent appraisal engagement.',
+      iconBg: 'bg-rose-50 text-rose-600',
+      description: 'Expiring in <90 days without recent contact',
+      actionText: 'Review Renewals',
+      href: '/clients?risk=renewals_at_risk',
     },
     cold_leads: {
       title: 'Cold Leads',
-      subtitle: 'Stage: Lead & No activity in 14 days',
-      theme: 'gold',
+      severity: 'ATTENTION',
+      severityBg: 'bg-amber-50 text-amber-700 border-amber-200',
+      accentColor: 'border-l-amber-500',
       icon: Flame,
-      borderClass: 'border-[#E08A3E]/40 hover:border-[#E08A3E]',
-      bgClass: 'bg-[#FFFBF5] hover:bg-[#FFF7EA]',
-      headerColor: 'text-[#C26F25]',
-      badgeBg: 'bg-[#E08A3E] text-white',
-      accentBar: 'bg-[#E08A3E]',
-      description: 'High-potential appraisal prospects needing immediate follow-up outreach.',
+      iconBg: 'bg-amber-50 text-amber-600',
+      description: 'Lead inquiries idle for 14+ days',
+      actionText: 'Follow Up Leads',
+      href: '/clients?risk=cold_leads',
     },
     stalled_engagements: {
       title: 'Stalled Engagements',
-      subtitle: 'In Appraisal & No activity in 21 days',
-      theme: 'navy',
+      severity: 'BLOCKED',
+      severityBg: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+      accentColor: 'border-l-indigo-500',
       icon: Clock,
-      borderClass: 'border-[#1B2A4A]/30 hover:border-[#1B2A4A]',
-      bgClass: 'bg-[#F4F7FB] hover:bg-[#EBF1F9]',
-      headerColor: 'text-[#1B2A4A]',
-      badgeBg: 'bg-[#1B2A4A] text-white',
-      accentBar: 'bg-[#1B2A4A]',
-      description: 'In-flight appraisal milestones with pending documentation or stalled ATM reviews.',
+      iconBg: 'bg-indigo-50 text-indigo-600',
+      description: 'In-appraisal milestone idle for 21+ days',
+      actionText: 'Unblock Milestone',
+      href: '/clients?risk=stalled_engagements',
     },
   }[type];
-
-  const handleClick = () => {
-    setActiveRiskFilter(type as RiskFilterType);
-    router.push(`/clients?risk=${type}`);
-  };
 
   const Icon = config.icon;
 
   return (
-    <div
-      onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleClick()}
-      className={`relative flex flex-col justify-between p-6 rounded-xl border-2 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md ${config.bgClass} ${config.borderClass} group`}
+    <Link
+      href={config.href}
+      className={`saas-card p-5 block group relative overflow-hidden border-l-4 ${config.accentColor}`}
     >
-      {/* Top indicator stripe */}
-      <div className={`absolute top-0 left-0 right-0 h-1.5 rounded-t-xl ${config.accentBar}`} />
-
-      {/* Header section */}
-      <div>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-2.5">
-            <div className={`p-2.5 rounded-lg bg-white shadow-xs border border-black/5 ${config.headerColor}`}>
-              <Icon className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className={`font-serif text-lg font-bold tracking-tight ${config.headerColor}`}>
-                {config.title}
-              </h3>
-              <p className="text-xs text-gray-500 font-medium">{config.subtitle}</p>
-            </div>
+      <div className="flex items-start justify-between">
+        <div className="flex items-center space-x-3">
+          <div className={`p-2.5 rounded-xl ${config.iconBg} shadow-saas-xs`}>
+            <Icon className="w-5 h-5" />
           </div>
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-xs text-slate-800">
+                {config.title}
+              </span>
+              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${config.severityBg}`}>
+                {config.severity}
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              {config.description}
+            </p>
+          </div>
+        </div>
 
-          {/* Count pill */}
-          <span className={`text-2xl font-bold px-3.5 py-1 rounded-full shadow-xs ${config.badgeBg}`}>
+        {/* Big Dominant Count */}
+        <div className="text-right">
+          <span className={`text-2xl sm:text-3xl font-bold tracking-tight ${count > 0 ? 'text-slate-900' : 'text-slate-400'}`}>
             {count}
           </span>
         </div>
-
-        {/* Description */}
-        <p className="mt-4 text-xs text-gray-700 leading-relaxed">
-          {config.description}
-        </p>
       </div>
 
-      {/* Action Footer */}
-      <div className="mt-5 pt-3.5 border-t border-black/5 flex items-center justify-between text-xs font-semibold text-[#1B2A4A] group-hover:text-[#B33A2E] transition-colors">
-        <span>Filter client records</span>
-        <div className="flex items-center space-x-1 group-hover:translate-x-1 transition-transform">
-          <span>View {count} {count === 1 ? 'Client' : 'Clients'}</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </div>
+      {/* Card Action Link */}
+      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+        <span className="text-[11px] text-slate-500 font-medium">
+          {count === 0 ? 'No active risk detected' : `${count} ${count === 1 ? 'client' : 'clients'} flagged`}
+        </span>
+
+        <span className="font-semibold text-slate-900 group-hover:text-amber-600 flex items-center space-x-1 transition-colors">
+          <span>{config.actionText}</span>
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+        </span>
       </div>
-    </div>
+    </Link>
   );
 };

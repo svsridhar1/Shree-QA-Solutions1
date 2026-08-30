@@ -16,7 +16,6 @@ import {
   GripVertical, 
   CheckCircle2, 
   FileText, 
-  ArrowRight,
   ShieldCheck,
   Plus,
   Mail,
@@ -28,7 +27,6 @@ interface ColumnDef {
   title: string;
   stepNumber: number;
   description: string;
-  color: string;
 }
 
 const PIPELINE_COLUMNS: ColumnDef[] = [
@@ -36,43 +34,37 @@ const PIPELINE_COLUMNS: ColumnDef[] = [
     id: 'inquiry',
     title: 'Inquiry',
     stepNumber: 1,
-    description: 'Scope definition & initial ATM planning',
-    color: '#E08A3E',
+    description: 'Scope definition & ATM planning',
   },
   {
     id: 'docs_collected',
     title: 'Docs Collected',
     stepNumber: 2,
-    description: 'Process asset library & project artifacts',
-    color: '#D97706',
+    description: 'PAL review & project sampling',
   },
   {
     id: 'assessment',
     title: 'Assessment',
     stepNumber: 3,
     description: 'Stage 1 readiness & gap analysis',
-    color: '#1B2A4A',
   },
   {
     id: 'site_visit',
     title: 'Site Visit',
     stepNumber: 4,
-    description: 'On-site lead appraisal & interviews',
-    color: '#2C3E6B',
+    description: 'On-site appraisal & ATM interviews',
   },
   {
     id: 'report',
     title: 'Report',
     stepNumber: 5,
-    description: 'Compilation of findings & PIIDs',
-    color: '#8F281E',
+    description: 'PIID findings & evidence compilation',
   },
   {
     id: 'signoff',
     title: 'Sign-off',
     stepNumber: 6,
-    description: 'Final rating & CMMI/ISO credentialing',
-    color: '#B33A2E',
+    description: 'Final rating & credentialing publication',
   },
 ];
 
@@ -138,7 +130,7 @@ export default function PipelinePage() {
     try {
       await updateClientSubstage(clientId, targetSubstage);
       const col = PIPELINE_COLUMNS.find((c) => c.id === targetSubstage);
-      setToastMessage(`Moved "${client.name}" to ${col?.title || targetSubstage} stage`);
+      setToastMessage(`Moved "${client.name}" to ${col?.title || targetSubstage} milestone`);
       setTimeout(() => setToastMessage(null), 3500);
     } catch (err) {
       console.error('Failed to update pipeline stage:', err);
@@ -149,52 +141,47 @@ export default function PipelinePage() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="flex flex-col items-center space-y-3">
-          <div className="w-10 h-10 border-4 border-[#B33A2E] border-t-transparent rounded-full animate-spin" />
-          <span className="font-serif text-sm font-semibold text-[#1B2A4A]">Loading Appraisal Pipeline...</span>
+          <div className="w-9 h-9 border-3 border-[#0F172A] border-t-amber-500 rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-slate-700">Loading Appraisal Pipeline...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 animate-fade-in">
       
       {/* Top Banner */}
-      <div className="bg-[#FAF7F2] rounded-xl border border-[#DEC6A6] p-6 shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#E08A3E] via-[#D35D33] to-[#B33A2E]" />
-        
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EBDDC9] text-[#1B2A4A] border border-[#DEC6A6]">
-                CMMI & ISO Lead Appraisal Flow
-              </span>
-              <span className="text-xs text-gray-500">• Lead Appraiser: Mahesh Bhaskara</span>
-            </div>
-            <h1 className="mt-2 font-serif text-2xl sm:text-3xl font-extrabold text-[#1B2A4A] tracking-tight">
-              In-Appraisal Kanban Pipeline
-            </h1>
-            <p className="text-xs sm:text-sm text-gray-700 mt-1">
-              Active appraisal cohorts moving from initial inquiry through documentation, readiness assessment, on-site appraisals, and final ratings sign-off.
-            </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 gap-4">
+        <div>
+          <div className="flex items-center space-x-2 text-xs font-semibold text-slate-500 mb-1">
+            <span>LEAD APPRAISER: MAHESH BHASKARA</span>
+            <span>•</span>
+            <span className="text-amber-600 font-bold">CMMI & ISO BENCHMARK AUDITS</span>
           </div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            In-Appraisal Kanban Pipeline
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Active appraisal cohorts moving from initial inquiry through documentation, readiness assessment, on-site appraisals, and final ratings sign-off.
+          </p>
+        </div>
 
-          <div className="flex items-center space-x-3">
-            <span className="text-xs font-semibold px-3 py-1.5 bg-[#1B2A4A] text-white rounded-lg shadow-xs">
-              {appraisalClients.length} Active Appraisals
-            </span>
-          </div>
+        <div className="flex items-center space-x-3">
+          <span className="text-xs font-bold px-3 py-1.5 bg-[#0F172A] text-white rounded-lg shadow-saas-xs">
+            {appraisalClients.length} Active Appraisals
+          </span>
         </div>
       </div>
 
       {/* Real-time Toast Feedback */}
       {toastMessage && (
-        <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-semibold flex items-center justify-between shadow-sm animate-fade-in">
+        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-semibold flex items-center justify-between shadow-saas-sm animate-fade-in">
           <div className="flex items-center space-x-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
             <span>{toastMessage}</span>
           </div>
-          <span className="text-[10px] text-emerald-700">Saved to database & activity timeline</span>
+          <span className="text-[10px] text-emerald-700">Persisted to CRM Activity Timeline</span>
         </div>
       )}
 
@@ -212,31 +199,28 @@ export default function PipelinePage() {
               onDragOver={(e) => handleDragOver(e, column.id)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, column.id)}
-              className={`flex flex-col rounded-xl border-2 transition-all min-h-[550px] bg-[#FAF7F2] ${
+              className={`flex flex-col rounded-xl border transition-all min-h-[580px] bg-slate-50/60 ${
                 isOver 
-                  ? 'border-[#B33A2E] bg-[#FFF8F6] shadow-md ring-2 ring-[#B33A2E]/20' 
-                  : 'border-[#DEC6A6] shadow-xs'
+                  ? 'border-amber-500 bg-amber-50/40 shadow-saas-md ring-2 ring-amber-500/20' 
+                  : 'border-slate-200 shadow-saas-xs'
               }`}
             >
               {/* Column Header */}
-              <div className="p-3.5 border-b border-[#DEC6A6]/80 bg-[#FAF7F2] rounded-t-xl">
+              <div className="p-3.5 border-b border-slate-200 bg-white rounded-t-xl">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-1.5">
-                    <span 
-                      className="w-5 h-5 rounded-full text-white text-[11px] font-bold flex items-center justify-center shrink-0 shadow-xs"
-                      style={{ backgroundColor: column.color }}
-                    >
+                  <div className="flex items-center space-x-2">
+                    <span className="w-5 h-5 rounded-md bg-[#0F172A] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
                       {column.stepNumber}
                     </span>
-                    <h3 className="font-serif text-xs font-bold text-[#1B2A4A] tracking-tight">
+                    <h3 className="text-xs font-bold text-slate-900">
                       {column.title}
                     </h3>
                   </div>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-white border border-[#DEC6A6] text-[#1B2A4A]">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700">
                     {columnClients.length}
                   </span>
                 </div>
-                <p className="text-[10px] text-gray-500 mt-1 leading-tight">
+                <p className="text-[10px] text-slate-400 mt-1 leading-tight">
                   {column.description}
                 </p>
               </div>
@@ -244,7 +228,7 @@ export default function PipelinePage() {
               {/* Cards Container */}
               <div className="p-2.5 flex-1 space-y-2.5 overflow-y-auto max-h-[700px]">
                 {columnClients.length === 0 ? (
-                  <div className={`p-4 rounded-lg border border-dashed text-center text-[11px] text-gray-400 ${isOver ? 'border-[#B33A2E] text-[#B33A2E]' : 'border-[#DEC6A6]'}`}>
+                  <div className={`p-4 rounded-lg border border-dashed text-center text-[11px] text-slate-400 ${isOver ? 'border-amber-500 text-amber-600 bg-amber-50/50' : 'border-slate-200'}`}>
                     {isOver ? 'Drop client here' : 'No clients in this stage'}
                   </div>
                 ) : (
@@ -259,35 +243,35 @@ export default function PipelinePage() {
                         draggable
                         onDragStart={(e) => handleDragStart(e, client.id)}
                         onClick={() => setSelectedClient(client)}
-                        className={`p-3 rounded-lg border bg-white shadow-xs hover:shadow-md cursor-grab active:cursor-grabbing transition-all ${
-                          isDragging ? 'opacity-40 scale-95 border-dashed border-[#B33A2E]' : 'border-[#DEC6A6] hover:border-[#1B2A4A]'
+                        className={`p-3 rounded-xl border bg-white shadow-saas-xs hover:shadow-saas-md cursor-grab active:cursor-grabbing transition-all ${
+                          isDragging ? 'opacity-40 scale-95 border-dashed border-amber-500' : 'border-slate-200 hover:border-slate-400'
                         } ${isStalled ? 'ring-1 ring-rose-400 bg-rose-50/20' : ''}`}
                       >
                         {/* Top tag & Grip */}
                         <div className="flex items-start justify-between gap-1 mb-1.5">
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBDDC9]/70 text-[#1B2A4A] border border-[#DEC6A6]/60">
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-800 border border-slate-200">
                             {client.service_type}
                           </span>
-                          <GripVertical className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                          <GripVertical className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                         </div>
 
                         {/* Client Name */}
-                        <h4 className="font-bold text-xs text-[#1B2A4A] hover:text-[#B33A2E] transition-colors line-clamp-2">
+                        <h4 className="font-bold text-xs text-slate-900 hover:text-amber-600 transition-colors line-clamp-2">
                           {client.name}
                         </h4>
 
                         {/* Stalled Alert Pill */}
                         {isStalled && (
-                          <div className="mt-2 p-1.5 rounded bg-rose-50 border border-rose-200 text-rose-800 text-[10px] font-semibold flex items-center space-x-1">
+                          <div className="mt-2 p-1.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-semibold flex items-center space-x-1">
                             <Clock className="w-3 h-3 text-rose-600 shrink-0" />
-                            <span>Stalled ({daysSinceActivity}d no activity)</span>
+                            <span>Stalled ({daysSinceActivity}d idle)</span>
                           </div>
                         )}
 
                         {/* Card Actions & Footer */}
-                        <div className="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-500">
+                        <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
                           <span className="flex items-center space-x-1 truncate max-w-[70px]">
-                            <User className="w-3 h-3 text-gray-400 shrink-0" />
+                            <User className="w-3 h-3 text-slate-400 shrink-0" />
                             <span className="truncate">{client.owner}</span>
                           </span>
 
@@ -297,7 +281,7 @@ export default function PipelinePage() {
                               type="button"
                               onClick={() => setEmailClient(client)}
                               title="AI Status Email"
-                              className="p-1.5 rounded bg-[#B33A2E]/10 text-[#B33A2E] hover:bg-[#B33A2E] hover:text-white transition-colors"
+                              className="p-1 rounded-md bg-slate-100 text-slate-700 hover:bg-[#0F172A] hover:text-white transition-colors"
                             >
                               <Mail className="w-3.5 h-3.5" />
                             </button>
@@ -310,8 +294,8 @@ export default function PipelinePage() {
               </div>
 
               {/* Column Footer */}
-              <div className="p-2 border-t border-[#DEC6A6]/40 text-center">
-                <span className="text-[10px] text-gray-400">
+              <div className="p-2 border-t border-slate-200/60 text-center bg-slate-50 rounded-b-xl">
+                <span className="text-[10px] text-slate-400 font-medium">
                   Step {column.stepNumber} of 6
                 </span>
               </div>
