@@ -14,10 +14,12 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   size = 'sm', 
   variant = 'solid' 
 }) => {
+  if (!client) return null;
+
   const generateMessage = () => {
     const appraiserName = 'Mahesh Bhaskara (Certified Lead Appraiser, Shree QA Solutions)';
-    const company = client.name;
-    const service = client.service_type;
+    const company = client.name || 'Client Organization';
+    const service = client.service_type || 'CMMI / ISO';
 
     if (client.stage === 'renewal_due') {
       const expiryText = client.cert_expiry_date ? ` due on ${client.cert_expiry_date}` : '';
@@ -25,7 +27,7 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
     }
 
     if (client.stage === 'in_appraisal') {
-      const substage = client.pipeline_substage ? ` [${client.pipeline_substage.replace('_', ' ').toUpperCase()}]` : '';
+      const substage = client.pipeline_substage ? ` [${String(client.pipeline_substage).replace(/_/g, ' ').toUpperCase()}]` : '';
       return `Hello Team ${company},\n\nThis is ${appraiserName} following up on your ${service} appraisal progress${substage}.\n\nPlease let us know if the team requires any assistance with process artifact submission or ATM readiness verification.\n\nBest regards,\nShree QA Solutions`;
     }
 
@@ -38,10 +40,14 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
 
   const handleWhatsAppClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const message = generateMessage();
-    const encoded = encodeURIComponent(message);
-    const url = `https://api.whatsapp.com/send?text=${encoded}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    try {
+      const message = generateMessage();
+      const encoded = encodeURIComponent(message);
+      const url = `https://api.whatsapp.com/send?text=${encoded}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      console.error('WhatsApp message error:', err);
+    }
   };
 
   const WhatsAppIcon = () => (
@@ -59,7 +65,7 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
       <button
         type="button"
         onClick={handleWhatsAppClick}
-        title={`Chat with ${client.name} via WhatsApp`}
+        title={`Chat with ${client?.name || 'Client'} via WhatsApp`}
         className="p-1.5 rounded-md bg-[#25D366]/10 text-[#128C7E] hover:bg-[#25D366] hover:text-white transition-colors flex items-center justify-center"
       >
         <WhatsAppIcon />
@@ -71,7 +77,7 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
     <button
       type="button"
       onClick={handleWhatsAppClick}
-      title={`Open WhatsApp template for ${client.name}`}
+      title={`Open WhatsApp template for ${client?.name || 'Client'}`}
       className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
         variant === 'solid'
           ? 'bg-[#25D366] text-white hover:bg-[#1EBE5D] shadow-xs'

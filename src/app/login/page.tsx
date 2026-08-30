@@ -58,19 +58,19 @@ export default function LoginPage() {
           <BrandLogo size="lg" editable={true} />
         </div>
 
-        {/* Brand Name */}
-        <div className="mt-4 flex items-baseline justify-center space-x-2">
-          <span className="font-serif text-3xl sm:text-4xl font-extrabold tracking-tight text-[#B33A2E]">
+        {/* Brand Name matching card format */}
+        <div className="mt-4 flex flex-col items-center leading-none select-none">
+          <span className="font-serif text-3xl sm:text-4xl font-extrabold tracking-wider text-[#B33A2E] leading-tight">
             SHREE
           </span>
-          <span className="font-sans text-2xl sm:text-3xl font-bold tracking-tight text-[#1B2A4A]">
+          <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1B2A4A] leading-tight mt-0.5">
             QA Solutions
           </span>
+          <span className="font-serif italic text-xs text-[#1B2A4A]/90 tracking-wide mt-1">
+            Excelling the Excellence
+          </span>
         </div>
-        <p className="mt-1 font-serif italic text-xs text-[#1B2A4A]/90">
-          "Excelling the Excellence" — CMMI & ISO Lead Appraisal CRM
-        </p>
-        <p className="text-[11px] text-gray-700 font-semibold mt-0.5">
+        <p className="text-[11px] text-gray-700 font-semibold mt-2">
           Mahesh Bhaskara • Certified Lead Appraiser
         </p>
         <p className="text-[10px] text-gray-500">

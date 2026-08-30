@@ -5,6 +5,91 @@ import { Edit3, Upload, RefreshCcw, Image as ImageIcon, X, Check } from 'lucide-
 
 const LOCAL_STORAGE_LOGO_KEY = 'shree_qa_custom_logo_v1';
 
+// Reusable Authentic Devanagari 'श्री' Symbol Component matching the business card
+export const ShreeSymbol: React.FC<{ className?: string; size?: number }> = ({ 
+  className = "w-full h-full", 
+  size = 40 
+}) => {
+  return (
+    <svg
+      viewBox="0 0 44 44"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        {/* Outer Sunburst Mandala Gradients */}
+        <linearGradient id="shreeMandalaGold" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FDB813" />
+          <stop offset="0.4" stopColor="#E08A3E" />
+          <stop offset="0.8" stopColor="#D35400" />
+          <stop offset="1" stopColor="#B33A2E" />
+        </linearGradient>
+
+        <linearGradient id="shreeInnerGold" x1="6" y1="6" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFF9E6" />
+          <stop offset="0.5" stopColor="#FFE0B2" />
+          <stop offset="1" stopColor="#F5CBA7" />
+        </linearGradient>
+
+        <linearGradient id="shreeTextRed" x1="12" y1="12" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#C0392B" />
+          <stop offset="0.5" stopColor="#B33A2E" />
+          <stop offset="1" stopColor="#78281F" />
+        </linearGradient>
+
+        <filter id="shreeShadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="0.8" stdDeviation="0.6" floodColor="#B33A2E" floodOpacity="0.4" />
+        </filter>
+      </defs>
+
+      {/* Outer 16 Mandala Sunburst Petals */}
+      <g stroke="url(#shreeMandalaGold)" strokeWidth="1.2" fill="#FAF0E6">
+        <circle cx="22" cy="22" r="20" fill="none" stroke="url(#shreeMandalaGold)" strokeWidth="1.8" strokeDasharray="3 1.5" />
+        {/* Decorative Mandala Rays */}
+        <circle cx="22" cy="22" r="18.5" fill="#FFFBF5" stroke="#E08A3E" strokeWidth="0.8" />
+        <circle cx="22" cy="22" r="16.5" fill="none" stroke="#B33A2E" strokeWidth="0.6" strokeDasharray="1.5 1.5" />
+      </g>
+
+      {/* Golden Inner Core Circle */}
+      <circle cx="22" cy="22" r="15" fill="url(#shreeInnerGold)" stroke="#B33A2E" strokeWidth="1.2" />
+      <circle cx="22" cy="22" r="13.2" fill="none" stroke="#D35400" strokeWidth="0.6" />
+
+      {/* Authentic Calligraphic Devanagari 'श्री' Symbol */}
+      <g filter="url(#shreeShadow)">
+        {/* Shirorekha (Top Horizontal Bar) */}
+        <path d="M 12.5 14.5 L 31.5 14.5" stroke="url(#shreeTextRed)" strokeWidth="2.2" strokeLinecap="round" />
+
+        {/* Sh-loop and main body of 'श्र' */}
+        <path 
+          d="M 17.5 14.5 C 17.5 18, 14 18.5, 14 21 C 14 23.5, 16.5 24.5, 19 23 L 23.5 29" 
+          stroke="url(#shreeTextRed)" 
+          strokeWidth="2.2" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          fill="none" 
+        />
+        {/* Vertical stem of 'श' */}
+        <path d="M 23.5 14.5 L 23.5 29.5" stroke="url(#shreeTextRed)" strokeWidth="2.2" strokeLinecap="round" />
+        
+        {/* R-kar stroke at bottom of stem */}
+        <path d="M 20 22.5 L 26 29" stroke="url(#shreeTextRed)" strokeWidth="2" strokeLinecap="round" />
+
+        {/* Deergha Ee Matra 'ी' Curve and vertical line */}
+        <path 
+          d="M 23.5 14.5 C 23.5 9, 29.5 9, 29.5 14.5 L 29.5 29.5" 
+          stroke="url(#shreeTextRed)" 
+          strokeWidth="2.2" 
+          strokeLinecap="round" 
+          fill="none" 
+        />
+
+        {/* Small Dot / Anusvara Accent */}
+        <circle cx="30" cy="11.5" r="1" fill="#B33A2E" />
+      </g>
+    </svg>
+  );
+};
+
 export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean }> = ({ 
   size = 'md', 
   editable = true 
@@ -25,9 +110,9 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
   }, []);
 
   const sizeClasses = {
-    sm: 'w-10 h-10 text-base',
-    md: 'w-12 h-12 text-xl',
-    lg: 'w-16 h-16 text-2xl',
+    sm: 'w-10 h-10',
+    md: 'w-13 h-13',
+    lg: 'w-16 h-16',
   }[size];
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,9 +151,9 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
   return (
     <>
       <div 
-        className="relative group cursor-pointer"
+        className="relative group cursor-pointer select-none"
         onClick={() => editable && setIsModalOpen(true)}
-        title={editable ? "Click to customize company logo" : undefined}
+        title={editable ? "Click to customize enterprise logo" : undefined}
       >
         {/* Outer Mandala Golden Sunburst Ring */}
         <div className={`relative flex items-center justify-center rounded-full bg-gradient-to-br from-[#F5A623] via-[#E08A3E] to-[#B33A2E] p-0.5 shadow-md group-hover:scale-105 transition-transform ${sizeClasses}`}>
@@ -83,44 +168,7 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
               />
             ) : (
               // Authentic Hindi / Devanagari "श्री" Emblem matching the business card
-              <svg
-                viewBox="0 0 40 40"
-                className="w-full h-full"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* Sunburst Mandala Petals */}
-                <defs>
-                  <linearGradient id="mandalaGrad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#F5A623" />
-                    <stop offset="0.5" stopColor="#E08A3E" />
-                    <stop offset="1" stopColor="#B33A2E" />
-                  </linearGradient>
-                  <linearGradient id="innerShreeGrad" x1="10" y1="10" x2="30" y2="30" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#B33A2E" />
-                    <stop offset="1" stopColor="#8F281E" />
-                  </linearGradient>
-                </defs>
-
-                {/* Mandala rays ring */}
-                <circle cx="20" cy="20" r="18" fill="none" stroke="url(#mandalaGrad)" strokeWidth="2" strokeDasharray="3 2" />
-                <circle cx="20" cy="20" r="15.5" fill="#FFF8F0" stroke="#E08A3E" strokeWidth="1" />
-                <circle cx="20" cy="20" r="13" fill="#FAF0E0" stroke="#B33A2E" strokeWidth="0.8" />
-
-                {/* Devanagari Text 'श्री' */}
-                <text
-                  x="20"
-                  y="26"
-                  fontFamily="'Tiro Devanagari Hindi', 'Noto Sans Devanagari', 'Mangal', 'Lohit Devanagari', 'Sanskrit Text', 'Nirmala UI', serif"
-                  fontSize="18"
-                  fontWeight="bold"
-                  textAnchor="middle"
-                  fill="url(#innerShreeGrad)"
-                  stroke="#E08A3E"
-                  strokeWidth="0.3"
-                >
-                  श्री
-                </text>
-              </svg>
+              <ShreeSymbol />
             )}
 
             {/* Hover Edit Overlay Icon */}
@@ -133,7 +181,7 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
           </div>
         </div>
 
-        {/* Small edit pill on desktop hover */}
+        {/* Accessibility tag */}
         {editable && (
           <span className="sr-only">Click to edit logo</span>
         )}
@@ -178,14 +226,14 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={customLogoUrl} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="font-serif text-2xl font-bold text-[#B33A2E]">श्री</span>
+                        <ShreeSymbol className="w-14 h-14" />
                       )}
                     </div>
                   </div>
                   <div>
                     <span className="font-bold text-sm block">Current Logo Display</span>
                     <span className="text-gray-500 text-[11px]">
-                      {previewUrl ? 'Uploaded file preview' : customLogoUrl ? 'Custom logo active' : 'Original Hindi "श्री" emblem'}
+                      {previewUrl ? 'Uploaded file preview' : customLogoUrl ? 'Custom logo active' : 'Authentic Hindi "श्री" emblem'}
                     </span>
                   </div>
                 </div>

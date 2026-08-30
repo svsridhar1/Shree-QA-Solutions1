@@ -48,15 +48,15 @@ export const ClientDetailDrawer: React.FC<ClientDetailDrawerProps> = ({ client, 
 
   if (!client) return null;
 
-  const logs = getClientLogs(client.id);
-  const daysSinceActivity = getDaysSinceLastActivity(client.id);
-  const renewalAtRisk = isRenewalAtRisk(client);
-  const coldLead = isColdLead(client);
-  const stalled = isStalledEngagement(client);
+  const logs = client?.id ? (getClientLogs(client.id) || []) : [];
+  const daysSinceActivity = client?.id ? getDaysSinceLastActivity(client.id) : 0;
+  const renewalAtRisk = client ? isRenewalAtRisk(client) : false;
+  const coldLead = client ? isColdLead(client) : false;
+  const stalled = client ? isStalledEngagement(client) : false;
 
   const handleAddNote = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newNote.trim()) return;
+    if (!newNote.trim() || !client?.id) return;
 
     setIsSubmitting(true);
     try {
@@ -65,13 +65,14 @@ export const ClientDetailDrawer: React.FC<ClientDetailDrawerProps> = ({ client, 
       setFeedbackMsg('Activity logged successfully! Risk status updated.');
       setTimeout(() => setFeedbackMsg(null), 3500);
     } catch (err) {
-      console.error(err);
+      console.error('Failed to add note:', err);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleStageChange = async (newStage: ClientStage) => {
+    if (!client?.id) return;
     await updateClient({
       id: client.id,
       stage: newStage,
@@ -80,25 +81,31 @@ export const ClientDetailDrawer: React.FC<ClientDetailDrawerProps> = ({ client, 
   };
 
   const handleSubstageChange = async (newSubstage: PipelineSubstage) => {
+    if (!client?.id) return;
     await updateClientSubstage(client.id, newSubstage);
   };
 
-  const formatDate = (dateStr: string | null) => {
+  const formatDate = (dateStr: string | null | undefined) => {
     if (!dateStr) return 'Not Set';
     try {
-      return new Date(dateStr).toLocaleDateString('en-IN', {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return String(dateStr);
+      return d.toLocaleDateString('en-IN', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
       });
     } catch {
-      return dateStr;
+      return String(dateStr);
     }
   };
 
-  const formatDateTime = (dateStr: string) => {
+  const formatDateTime = (dateStr: string | null | undefined) => {
+    if (!dateStr) return '';
     try {
-      return new Date(dateStr).toLocaleDateString('en-IN', {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return String(dateStr);
+      return d.toLocaleDateString('en-IN', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -106,7 +113,7 @@ export const ClientDetailDrawer: React.FC<ClientDetailDrawerProps> = ({ client, 
         minute: '2-digit',
       });
     } catch {
-      return dateStr;
+      return String(dateStr);
     }
   };
 
@@ -130,17 +137,17 @@ export const ClientDetailDrawer: React.FC<ClientDetailDrawerProps> = ({ client, 
                 <div>
                   <div className="flex items-center space-x-2">
                     <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-[#E08A3E] text-white uppercase tracking-wider">
-                      {client.service_type}
+                      {client.service_type || 'CMMI / ISO'}
                     </span>
                     <span className="text-xs text-amber-200 font-medium capitalize">
-                      {client.stage.replace('_', ' ')}
+                      {String(client.stage || '').replace(/_/g, ' ')}
                     </span>
                   </div>
                   <h2 className="mt-2 font-serif text-2xl font-bold tracking-tight text-white">
-                    {client.name}
+                    {client.name || 'Client Record'}
                   </h2>
                   <p className="text-xs text-slate-300 mt-1">
-                    Lead Appraiser: <span className="text-white font-medium">{client.owner}</span> • Last contact: {daysSinceActivity} {daysSinceActivity === 1 ? 'day' : 'days'} ago
+                    Lead Appraiser: <span className="text-white font-medium">{client.owner || 'Mahesh Bhaskara'}</span> • Last contact: {daysSinceActivity} {daysSinceActivity === 1 ? 'day' : 'days'} ago
                   </p>
                 </div>
 
@@ -202,7 +209,7 @@ export const ClientDetailDrawer: React.FC<ClientDetailDrawerProps> = ({ client, 
                   <div>
                     <span className="text-gray-500 block">Current Stage</span>
                     <select
-                      value={client.stage}
+                      value={client.stage || 'lead'}
                       onChange={(e) => handleStageChange(e.target.value as ClientStage)}
                       className="mt-1 block w-full rounded-md border border-[#DEC6A6] bg-[#FAF7F2] px-2.5 py-1.5 text-xs font-semibold text-[#1B2A4A] focus:border-[#B33A2E] focus:ring-1 focus:ring-[#B33A2E]"
                     >
@@ -376,11 +383,13 @@ export const ClientDetailDrawer: React.FC<ClientDetailDrawerProps> = ({ client, 
       </div>
 
       {/* AI Email Generator Modal */}
-      <AIEmailGeneratorModal
-        client={client}
-        isOpen={isEmailModalOpen}
-        onClose={() => setIsEmailModalOpen(false)}
-      />
+      {isEmailModalOpen && (
+        <AIEmailGeneratorModal
+          client={client}
+          isOpen={isEmailModalOpen}
+          onClose={() => setIsEmailModalOpen(false)}
+        />
+      )}
     </>
   );
 };

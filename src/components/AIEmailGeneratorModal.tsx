@@ -61,10 +61,12 @@ export const AIEmailGeneratorModal: React.FC<AIEmailGeneratorModalProps> = ({
   const generateEmailContent = (targetClient: Client, template: TemplateType) => {
     const appraiser = 'Mahesh Bhaskara';
     const appraiserTitle = 'Certified Lead Appraiser (CMMI DEV, SVC, SEC, SPM, PPL Domains)';
-    const company = targetClient.name;
-    const service = targetClient.service_type;
-    const expiry = targetClient.cert_expiry_date || '[Expiry Date]';
-    const substage = targetClient.pipeline_substage ? targetClient.pipeline_substage.replace('_', ' ').toUpperCase() : 'ASSESSMENT';
+    const company = targetClient?.name || 'Client Organization';
+    const service = targetClient?.service_type || 'CMMI / ISO';
+    const expiry = targetClient?.cert_expiry_date || '[Expiry Date]';
+    const substage = targetClient?.pipeline_substage 
+      ? String(targetClient.pipeline_substage).replace(/_/g, ' ').toUpperCase() 
+      : 'ASSESSMENT';
 
     let genSubject = '';
     let genBody = '';
@@ -205,15 +207,18 @@ Phone: +91 9177020007 | Email: maheshbhaskara@shreeqasolutions.com`;
   };
 
   const handleMailto = () => {
-    const emailTo = `${client.owner.toLowerCase().replace(/\s+/g, '.')}@${client.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+    const ownerName = client?.owner ? String(client.owner).toLowerCase().replace(/\s+/g, '.') : 'appraiser';
+    const clientCleanName = client?.name ? String(client.name).toLowerCase().replace(/[^a-z0-9]/g, '') : 'client';
+    const emailTo = `${ownerName}@${clientCleanName || 'company'}.com`;
     const mailtoUrl = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoUrl, '_blank');
   };
 
   const handleLogAsActivity = async () => {
+    if (!client?.id) return;
     await addActivityLog(
       client.id,
-      `[AI Email Sent] Template: "${selectedTemplate.replace('_', ' ').toUpperCase()}". Subject: "${subject}"`,
+      `[AI Email Sent] Template: "${selectedTemplate.replace(/_/g, ' ').toUpperCase()}". Subject: "${subject}"`,
       'Mahesh Bhaskara (Lead Appraiser)'
     );
     setIsLogged(true);
@@ -240,7 +245,7 @@ Phone: +91 9177020007 | Email: maheshbhaskara@shreeqasolutions.com`;
                     <Sparkles className="w-4 h-4 text-amber-300" />
                   </h3>
                   <p className="text-xs text-slate-300">
-                    Auto-generated for <strong className="text-white">{client.name}</strong> ({client.service_type} • {client.stage.replace('_', ' ')})
+                    Auto-generated for <strong className="text-white">{client?.name}</strong> ({client?.service_type} • {String(client?.stage || '').replace(/_/g, ' ')})
                   </p>
                 </div>
               </div>
