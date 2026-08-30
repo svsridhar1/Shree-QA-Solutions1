@@ -5,86 +5,109 @@ import { Edit3, Upload, RefreshCcw, Image as ImageIcon, X, Check } from 'lucide-
 
 const LOCAL_STORAGE_LOGO_KEY = 'shree_qa_custom_logo_v1';
 
-// Reusable Authentic Devanagari 'श्री' Symbol Component matching the business card
+// Exact SVG Lotus-Sunburst Mandala with Devanagari 'श्री' matching media_1788055785667.jpg
 export const ShreeSymbol: React.FC<{ className?: string; size?: number }> = ({ 
   className = "w-full h-full", 
-  size = 40 
+  size = 48 
 }) => {
   return (
     <svg
-      viewBox="0 0 44 44"
+      viewBox="0 0 100 100"
       className={className}
       xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Shree Emblem"
     >
       <defs>
-        {/* Outer Sunburst Mandala Gradients */}
-        <linearGradient id="shreeMandalaGold" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FDB813" />
-          <stop offset="0.4" stopColor="#E08A3E" />
-          <stop offset="0.8" stopColor="#D35400" />
-          <stop offset="1" stopColor="#B33A2E" />
+        {/* Outer petal gradient: Gold center to rich terracotta/red rim */}
+        <radialGradient id="petalGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+          <stop offset="0%" stopColor="#FDB813" />
+          <stop offset="60%" stopColor="#E67E22" />
+          <stop offset="88%" stopColor="#C0392B" />
+          <stop offset="100%" stopColor="#78281F" />
+        </radialGradient>
+
+        {/* Inner cream/warm ivory parchment background */}
+        <radialGradient id="innerDisk" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FFFAF0" />
+          <stop offset="75%" stopColor="#F7EEDD" />
+          <stop offset="100%" stopColor="#EAD8BE" />
+        </radialGradient>
+
+        {/* Calligraphic 'श्री' terracotta-red gradient */}
+        <linearGradient id="shreeCalligraphy" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#C0392B" />
+          <stop offset="100%" stopColor="#96281B" />
         </linearGradient>
 
-        <linearGradient id="shreeInnerGold" x1="6" y1="6" x2="38" y2="38" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FFF9E6" />
-          <stop offset="0.5" stopColor="#FFE0B2" />
-          <stop offset="1" stopColor="#F5CBA7" />
-        </linearGradient>
-
-        <linearGradient id="shreeTextRed" x1="12" y1="12" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#C0392B" />
-          <stop offset="0.5" stopColor="#B33A2E" />
-          <stop offset="1" stopColor="#78281F" />
-        </linearGradient>
-
-        <filter id="shreeShadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="0.8" stdDeviation="0.6" floodColor="#B33A2E" floodOpacity="0.4" />
+        {/* Subtle shadow for depth */}
+        <filter id="softShreeShadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0.5" dy="1" stdDeviation="0.8" floodColor="#78281F" floodOpacity="0.35" />
         </filter>
       </defs>
 
-      {/* Outer 16 Mandala Sunburst Petals */}
-      <g stroke="url(#shreeMandalaGold)" strokeWidth="1.2" fill="#FAF0E6">
-        <circle cx="22" cy="22" r="20" fill="none" stroke="url(#shreeMandalaGold)" strokeWidth="1.8" strokeDasharray="3 1.5" />
-        {/* Decorative Mandala Rays */}
-        <circle cx="22" cy="22" r="18.5" fill="#FFFBF5" stroke="#E08A3E" strokeWidth="0.8" />
-        <circle cx="22" cy="22" r="16.5" fill="none" stroke="#B33A2E" strokeWidth="0.6" strokeDasharray="1.5 1.5" />
+      {/* 16 Scalloped Lotus Mandala Petals */}
+      <g stroke="#6E1F16" strokeWidth="1.2">
+        {Array.from({ length: 16 }).map((_, i) => {
+          const angle = (i * 360) / 16;
+          return (
+            <path
+              key={i}
+              d="M 50 50 L 41 6 C 45.5 3 54.5 3 59 6 Z"
+              fill="url(#petalGradient)"
+              transform={`rotate(${angle} 50 50)`}
+            />
+          );
+        })}
       </g>
 
-      {/* Golden Inner Core Circle */}
-      <circle cx="22" cy="22" r="15" fill="url(#shreeInnerGold)" stroke="#B33A2E" strokeWidth="1.2" />
-      <circle cx="22" cy="22" r="13.2" fill="none" stroke="#D35400" strokeWidth="0.6" />
+      {/* Outer scalloped rim trim */}
+      <circle cx="50" cy="50" r="45.5" fill="none" stroke="#B33A2E" strokeWidth="1" opacity="0.6" />
 
-      {/* Authentic Calligraphic Devanagari 'श्री' Symbol */}
-      <g filter="url(#shreeShadow)">
+      {/* Inner Decorative Golden Ring */}
+      <circle cx="50" cy="50" r="35" fill="url(#innerDisk)" stroke="#78281F" strokeWidth="2.2" />
+      <circle cx="50" cy="50" r="32.5" fill="none" stroke="#D35400" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
+
+      {/* Exact Devanagari Hindi 'श्री' Glyph */}
+      <g filter="url(#softShreeShadow)" fill="url(#shreeCalligraphy)">
         {/* Shirorekha (Top Horizontal Bar) */}
-        <path d="M 12.5 14.5 L 31.5 14.5" stroke="url(#shreeTextRed)" strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M 28 32 C 28 30.5 29.5 30 31 30 L 71 30 C 72.5 30 74 30.5 74 32 C 74 33.5 72.5 34 71 34 L 31 34 C 29.5 34 28 33.5 28 32 Z" />
 
-        {/* Sh-loop and main body of 'श्र' */}
+        {/* 'श' Loop and left body */}
         <path 
-          d="M 17.5 14.5 C 17.5 18, 14 18.5, 14 21 C 14 23.5, 16.5 24.5, 19 23 L 23.5 29" 
-          stroke="url(#shreeTextRed)" 
-          strokeWidth="2.2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
-          fill="none" 
-        />
-        {/* Vertical stem of 'श' */}
-        <path d="M 23.5 14.5 L 23.5 29.5" stroke="url(#shreeTextRed)" strokeWidth="2.2" strokeLinecap="round" />
-        
-        {/* R-kar stroke at bottom of stem */}
-        <path d="M 20 22.5 L 26 29" stroke="url(#shreeTextRed)" strokeWidth="2" strokeLinecap="round" />
-
-        {/* Deergha Ee Matra 'ी' Curve and vertical line */}
-        <path 
-          d="M 23.5 14.5 C 23.5 9, 29.5 9, 29.5 14.5 L 29.5 29.5" 
-          stroke="url(#shreeTextRed)" 
-          strokeWidth="2.2" 
-          strokeLinecap="round" 
-          fill="none" 
+          d="M 40 33 
+             C 40 39, 31 41, 31 47 
+             C 31 52.5, 36 55.5, 41 53 
+             C 43.5 51.5, 45 49, 46 46 
+             L 53.5 68 C 54.2 70, 56.5 70, 57 68.5 C 57.5 67, 56.5 65.5, 55 62 L 49.5 46.5
+             C 51 43.5, 51.5 39, 48 35.5
+             C 45.5 33, 42.5 32.5, 40 33 Z
+             M 39 42
+             C 40.5 44.5, 38.5 48.5, 35.5 48
+             C 34 47.5, 34 44.5, 36.5 43
+             C 37.5 42.5, 38.2 42.2, 39 42 Z" 
+          fillRule="evenodd"
         />
 
-        {/* Small Dot / Anusvara Accent */}
-        <circle cx="30" cy="11.5" r="1" fill="#B33A2E" />
+        {/* Vertical Stem of 'श' */}
+        <path d="M 53 32 L 53 69 C 53 71, 56.5 71, 56.5 69 L 56.5 32 Z" />
+
+        {/* R-kar diagonal foot stroke */}
+        <path d="M 45 52 L 56 68.5 C 56.8 69.8, 58.5 69, 57.8 67.5 L 47 50.5 Z" />
+
+        {/* Deergha Ee Matra ('ी') - Elegant arch looping over and down */}
+        <path 
+          d="M 53.5 32 
+             C 53.5 17, 68 17, 68 32
+             L 68 69
+             C 68 71, 71.5 71, 71.5 69
+             L 71.5 32
+             C 71.5 13, 50 13, 50 32
+             Z" 
+        />
+
+        {/* Dot / Bindu / Top Accent */}
+        <circle cx="69" cy="18" r="2.2" fill="#B33A2E" />
       </g>
     </svg>
   );
@@ -110,9 +133,9 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
   }, []);
 
   const sizeClasses = {
-    sm: 'w-10 h-10',
-    md: 'w-13 h-13',
-    lg: 'w-16 h-16',
+    sm: 'w-11 h-11',
+    md: 'w-13 h-13 sm:w-14 sm:h-14',
+    lg: 'w-18 h-18 sm:w-20 sm:h-20',
   }[size];
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,34 +174,29 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
   return (
     <>
       <div 
-        className="relative group cursor-pointer select-none"
+        className="relative group cursor-pointer select-none shrink-0"
         onClick={() => editable && setIsModalOpen(true)}
         title={editable ? "Click to customize enterprise logo" : undefined}
       >
-        {/* Outer Mandala Golden Sunburst Ring */}
-        <div className={`relative flex items-center justify-center rounded-full bg-gradient-to-br from-[#F5A623] via-[#E08A3E] to-[#B33A2E] p-0.5 shadow-md group-hover:scale-105 transition-transform ${sizeClasses}`}>
-          <div className="w-full h-full rounded-full bg-[#FAF7F2] flex items-center justify-center overflow-hidden border border-[#E08A3E]/40 relative">
-            
-            {customLogoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img 
-                src={customLogoUrl} 
-                alt="Shree QA Solutions Logo" 
-                className="w-full h-full object-cover rounded-full"
-              />
-            ) : (
-              // Authentic Hindi / Devanagari "श्री" Emblem matching the business card
-              <ShreeSymbol />
-            )}
+        <div className={`relative flex items-center justify-center ${sizeClasses} transition-transform group-hover:scale-105`}>
+          {customLogoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img 
+              src={customLogoUrl} 
+              alt="Shree QA Solutions Logo" 
+              className="w-full h-full object-cover rounded-full shadow-md border-2 border-[#E08A3E]"
+            />
+          ) : (
+            // Exact Hindi "श्री" Mandala Symbol
+            <ShreeSymbol />
+          )}
 
-            {/* Hover Edit Overlay Icon */}
-            {editable && (
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-full transition-opacity">
-                <Edit3 className="w-3.5 h-3.5 text-white" />
-              </div>
-            )}
-
-          </div>
+          {/* Hover Edit Overlay Icon */}
+          {editable && (
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-full transition-opacity">
+              <Edit3 className="w-4 h-4 text-white" />
+            </div>
+          )}
         </div>
 
         {/* Accessibility tag */}
@@ -208,7 +226,7 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
                   </button>
                 </div>
                 <p className="text-xs text-slate-300 mt-1">
-                  Upload any company emblem of your choice or keep the authentic Devanagari Hindi "श्री" mark.
+                  Upload any company emblem or keep the authentic Devanagari Hindi "श्री" mark.
                 </p>
               </div>
 
@@ -217,30 +235,28 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
                 
                 {/* Live Preview */}
                 <div className="flex items-center justify-center space-x-4 p-4 rounded-lg bg-white border border-[#DEC6A6]">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#F5A623] via-[#E08A3E] to-[#B33A2E] p-0.5 shadow-md flex items-center justify-center overflow-hidden">
-                    <div className="w-full h-full rounded-full bg-[#FAF7F2] flex items-center justify-center overflow-hidden">
-                      {previewUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                      ) : customLogoUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={customLogoUrl} alt="Preview" className="w-full h-full object-cover" />
-                      ) : (
-                        <ShreeSymbol className="w-14 h-14" />
-                      )}
-                    </div>
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden shrink-0">
+                    {previewUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
+                    ) : customLogoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={customLogoUrl} alt="Preview" className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <ShreeSymbol className="w-16 h-16" />
+                    )}
                   </div>
                   <div>
-                    <span className="font-bold text-sm block">Current Logo Display</span>
+                    <span className="font-bold text-sm block text-[#1B2A4A]">Current Logo Display</span>
                     <span className="text-gray-500 text-[11px]">
-                      {previewUrl ? 'Uploaded file preview' : customLogoUrl ? 'Custom logo active' : 'Authentic Hindi "श्री" emblem'}
+                      {previewUrl ? 'Uploaded file preview' : customLogoUrl ? 'Custom logo active' : 'Authentic Hindi "श्री" mandala'}
                     </span>
                   </div>
                 </div>
 
                 {/* Option 1: File Upload */}
                 <div>
-                  <label className="font-semibold block mb-1.5">Upload Logo Image File (PNG, JPG, SVG)</label>
+                  <label className="font-semibold block mb-1.5 text-gray-700">Upload Logo Image File (PNG, JPG, SVG)</label>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -260,7 +276,7 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
 
                 {/* Option 2: Image URL */}
                 <div>
-                  <label className="font-semibold block mb-1">Or Paste Image URL</label>
+                  <label className="font-semibold block mb-1 text-gray-700">Or Paste Image URL</label>
                   <input
                     type="url"
                     value={inputUrl}
@@ -269,7 +285,7 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
                       if (e.target.value.trim()) setPreviewUrl(e.target.value.trim());
                     }}
                     placeholder="https://example.com/logo.png"
-                    className="w-full rounded-md border border-[#DEC6A6] bg-white p-2 text-xs text-[#1B2A4A]"
+                    className="w-full rounded-md border border-[#DEC6A6] bg-white p-2 text-xs text-[#1B2A4A] focus:border-[#B33A2E] focus:ring-1 focus:ring-[#B33A2E]"
                   />
                 </div>
 

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
-import { BrandLogo } from '@/components/BrandLogo';
+import { EnterpriseBrand } from '@/components/EnterpriseBrand';
 import { 
   ShieldCheck, 
   Lock, 
@@ -51,26 +51,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#F5F0E6] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       
-      {/* Top Header Logo */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        {/* Devanagari Hindi "श्री" Mandala Emblem */}
-        <div className="flex justify-center">
-          <BrandLogo size="lg" editable={true} />
-        </div>
+      {/* Top Header Logo matching exact card format */}
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center flex flex-col items-center">
+        <EnterpriseBrand size="lg" href={undefined} editableLogo={true} />
 
-        {/* Brand Name matching card format */}
-        <div className="mt-4 flex flex-col items-center leading-none select-none">
-          <span className="font-serif text-3xl sm:text-4xl font-extrabold tracking-wider text-[#B33A2E] leading-tight">
-            SHREE
-          </span>
-          <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#1B2A4A] leading-tight mt-0.5">
-            QA Solutions
-          </span>
-          <span className="font-serif italic text-xs text-[#1B2A4A]/90 tracking-wide mt-1">
-            Excelling the Excellence
-          </span>
-        </div>
-        <p className="text-[11px] text-gray-700 font-semibold mt-2">
+        <p className="text-[11px] text-gray-700 font-semibold mt-3">
           Mahesh Bhaskara • Certified Lead Appraiser
         </p>
         <p className="text-[10px] text-gray-500">

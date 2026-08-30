@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/authContext';
 import { useCRM } from '@/lib/crmStore';
-import { BrandLogo, ShreeSymbol } from '@/components/BrandLogo';
+import { EnterpriseBrand } from '@/components/EnterpriseBrand';
+import { ShreeSymbol } from '@/components/BrandLogo';
 import { AIAssistantModal } from '@/components/AIAssistantModal';
 import { 
   LayoutDashboard, 
@@ -13,7 +14,6 @@ import {
   Kanban, 
   LogOut, 
   RotateCcw, 
-  ShieldCheck, 
   Sparkles,
   Menu,
   X
@@ -46,28 +46,14 @@ export const Header: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF7F2] shadow-xs border-b border-[#DEC6A6]/60">
-      {/* Top corporate bar */}
+    <header className="sticky top-0 z-40 bg-[#FAF7F2] shadow-xs border-b border-[#DEC6A6]/70">
+      {/* Top corporate navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-24 sm:h-22">
           
-          {/* Brand Logo & Tagline EXACTLY matching business card format */}
-          <div className="flex items-center space-x-3.5">
-            {/* Editable Devanagari "श्री" Emblem */}
-            <BrandLogo size="md" editable={true} />
-
-            {/* Exact 3-line format matching business card */}
-            <Link href="/" className="flex flex-col group leading-none select-none">
-              <span className="font-serif text-2xl sm:text-3xl font-extrabold tracking-wide text-[#B33A2E] leading-tight">
-                SHREE
-              </span>
-              <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#1B2A4A] leading-tight -mt-0.5">
-                QA Solutions
-              </span>
-              <span className="text-[10px] sm:text-[11px] font-serif italic text-[#1B2A4A]/90 tracking-wide mt-0.5">
-                Excelling the Excellence
-              </span>
-            </Link>
+          {/* Exact Enterprise Brand Format on Top Left Corner */}
+          <div className="flex items-center">
+            <EnterpriseBrand size="md" href="/" editableLogo={true} />
           </div>
 
           {/* Desktop Navigation */}
@@ -110,18 +96,18 @@ export const Header: React.FC = () => {
             
             {!isLoginPage && isAuthenticated && (
               <>
-                {/* AI Assistant Button with authentic Shree emblem inside */}
+                {/* AI Assistant Button with authentic Hindi Shree emblem inside */}
                 <button
                   type="button"
                   onClick={() => setIsAIOpen(true)}
-                  className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#1B2A4A] to-[#2C3E6B] text-white text-xs font-bold shadow-xs hover:shadow-md border border-[#E08A3E]/40 hover:scale-105 transition-all"
+                  className="flex items-center space-x-2 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-[#1B2A4A] to-[#2C3E6B] text-white text-xs font-bold shadow-xs hover:shadow-md border border-[#E08A3E]/50 hover:scale-105 transition-all"
                   title="Ask AI Assistant about clients, appraisals, or risk queries"
                 >
-                  <div className="w-5 h-5 rounded-full overflow-hidden shrink-0">
+                  <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-[#FAF7F2] p-0.5 shadow-xs">
                     <ShreeSymbol />
                   </div>
                   <span className="hidden sm:inline">AI Assist</span>
-                  <Sparkles className="w-3 h-3 text-amber-300" />
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 </button>
 
                 {/* Reset Data Button */}
@@ -181,10 +167,10 @@ export const Header: React.FC = () => {
               setIsAIOpen(true);
               setMobileMenuOpen(false);
             }}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-md text-xs font-bold bg-[#1B2A4A] text-white shadow-xs border border-[#E08A3E]/40"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-md text-xs font-bold bg-[#1B2A4A] text-white shadow-xs border border-[#E08A3E]/40"
           >
-            <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 rounded-full overflow-hidden shrink-0">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 bg-[#FAF7F2] p-0.5">
                 <ShreeSymbol />
               </div>
               <span>AI Appraisal Assistant</span>
