@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useCRM } from '@/lib/crmStore';
 import { Client } from '@/types/crm';
-import { ShreeSymbol } from '@/components/BrandLogo';
+import { BrandLogo, ShreeSymbol } from '@/components/BrandLogo';
 import { 
   Bot, 
   Sparkles, 
@@ -179,8 +179,8 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           <div className="bg-[#0F172A] p-5 text-white relative">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-xl bg-white p-1 shadow-saas-xs flex items-center justify-center">
-                  <ShreeSymbol />
+                <div className="w-9 h-9 rounded-xl bg-white p-0.5 shadow-saas-xs flex items-center justify-center overflow-hidden shrink-0">
+                  <BrandLogo size="sm" editable={false} />
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">

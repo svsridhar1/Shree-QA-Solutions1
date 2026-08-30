@@ -115,7 +115,7 @@ export const ShreeSymbol: React.FC<{ className?: string; size?: number }> = ({
   );
 };
 
-export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean }> = ({ 
+export const BrandLogo: React.FC<{ size?: 'xs' | 'sm' | 'md' | 'lg'; editable?: boolean }> = ({ 
   size = 'md', 
   editable = true 
 }) => {
@@ -144,7 +144,8 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; editable?: boolean
   }, []);
 
   const sizeClasses = {
-    sm: 'w-11 h-11',
+    xs: 'w-5 h-5',
+    sm: 'w-8 h-8 sm:w-9 sm:h-9',
     md: 'w-13 h-13 sm:w-14 sm:h-14',
     lg: 'w-18 h-18 sm:w-20 sm:h-20',
   }[size];

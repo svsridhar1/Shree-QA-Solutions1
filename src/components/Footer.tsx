@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ShieldCheck, MapPin, Mail, Phone, Award, Globe, Heart } from 'lucide-react';
-import { ShreeSymbol } from '@/components/BrandLogo';
+import { BrandLogo } from '@/components/BrandLogo';
 
 export const Footer: React.FC = () => {
   return (
@@ -10,22 +10,33 @@ export const Footer: React.FC = () => {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
-          {/* Brand Identity Column */}
+          {/* Brand Identity Column with exact 3-line format */}
           <div className="space-y-3 md:col-span-1">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-white p-0.5 shadow-xs">
-                <ShreeSymbol />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-serif text-lg font-bold tracking-tight text-white leading-none">
-                  SHREE QA Solutions
+            <div className="flex items-center space-x-3 select-none">
+              <BrandLogo size="sm" editable={true} />
+
+              <div className="flex flex-col justify-center text-left">
+                {/* Line 1: SHREE */}
+                <span className="font-serif text-xl font-extrabold tracking-wider text-[#E11D48] leading-none uppercase">
+                  SHREE
                 </span>
-                <span className="text-[10px] font-serif italic text-amber-400 mt-0.5">
+
+                {/* Line 2: QA Solutions in single line */}
+                <span className="font-serif text-sm font-bold tracking-tight text-white leading-none mt-1 whitespace-nowrap">
+                  QA Solutions
+                </span>
+
+                {/* Divider line */}
+                <div className="w-full h-[1px] bg-slate-700 my-1" />
+
+                {/* Line 3: Excelling the Excellence in single line */}
+                <span className="font-serif text-[10px] font-medium italic tracking-tight text-amber-400 leading-none whitespace-nowrap">
                   Excelling the Excellence
                 </span>
               </div>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
+
+            <p className="text-xs text-slate-400 leading-relaxed pt-1">
               Authorized CMMI Institute Partner & ISO/IEC Lead Appraisal Body.
             </p>
           </div>
